@@ -6,6 +6,7 @@ import chainplot.core.style as plot_style
 # Need to think about how flexible vs just personal use/convenience?
 #   For some level of flexibility it'll make more sense just to start from scratch w/ graphics of grammar
 # How much am I just going to rip off ggplot? And how much to adapt to a more 'pythonic' approach?
+# How do I set default styles/subtitles etc in a natural manner?
 
 
 # Define some helper functions (should probably go into class as static methods tbh)
@@ -108,6 +109,9 @@ class Plot:
             self.style = style
 
         self.fig.set_facecolor('snow')
+
+    def apply_style(self):
+        return self
 
     def aesthetics(self, x=None, y=None, by=None, **kwargs):
         if by is None:
@@ -312,8 +316,9 @@ class Plot:
             # Set background colour
             ax.set_axis_bgcolor('snow')
 
-            ax.set_xlabel(self.aes['x'])
-            ax.set_ylabel(self.aes['y'])
+            # Need to check row and column
+            ax.set_xlabel(self.aes['x'], **self.style['axes_text'])
+            ax.set_ylabel(self.aes['y'], **self.style['axes_text'])
 
         return self
 
@@ -321,6 +326,12 @@ class Plot:
         for k, v in self.style['subtitle'].items():
             if k not in kwargs.keys():
                 kwargs[k] = v
+
+        if subtitle is None:
+            if len(self.axes) > 1:
+                subtitle = sorted(self.data[self.aes['by']].unique())
+            else:
+                subtitle = ''
 
         if type(subtitle) in (list, tuple):
             for i, ax in enumerate(self.axes):
