@@ -1,0 +1,3 @@
+# ignore Pycharm project files
+.idea
+.idea/*
