@@ -27,20 +27,6 @@ def facet_dimensions(number_of_plots):
     return nrows, ncols
 
 
-def apply_style_continuous(ax):
-    ax.spines["bottom"].set_color('dimgray')
-    ax.spines["left"].set_color('dimgray')
-    ax.tick_params(colors='dimgray')
-    # Remove top and bottom spines
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    # Remove extra ticks
-    ax.get_xaxis().tick_bottom()
-    ax.get_yaxis().tick_left()
-    # Set background colour
-    ax.set_axis_bgcolor('snow')
-
-
 def apply_style_discrete(ax, lookup, categorical):
     if categorical == 'x':
         ax.set_xticks(list(lookup.values()))
@@ -164,7 +150,6 @@ class Plot:
                 if categorical is None:
                     # could create a kwargs dict dynamically or through a loop or something
                     ax.scatter(xdata, ydata, **kwargs)
-                    apply_style_continuous(ax)
 
                 elif categorical is 'x':
                     xlookup = categorical_lookup(plot_data[self.aes['x']])
@@ -271,6 +256,35 @@ class Plot:
             ax.plot(xline, yline, **kwargs)
 
         return self
+
+    def xlim(self, lims, **kwargs):
+        for ax in self.axes:
+            ax.set_xlim(lims, **kwargs)
+        return self
+
+    def ylim(self, lims, **kwargs):
+        for ax in self.axes:
+            ax.set_ylim(lims, **kwargs)
+        return self
+
+    # Style functions
+    def apply_style_continuous(self):
+
+        for ax in self.axes:
+            ax.spines["bottom"].set_color('dimgray')
+            ax.spines["left"].set_color('dimgray')
+            ax.tick_params(colors='dimgray')
+            # Remove top and bottom spines
+            ax.spines["top"].set_visible(False)
+            ax.spines["right"].set_visible(False)
+            # Remove extra ticks
+            ax.get_xaxis().tick_bottom()
+            ax.get_yaxis().tick_left()
+            # Set background colour
+            ax.set_axis_bgcolor('snow')
+
+            ax.set_xlabel(self.aes['x'])
+            ax.set_ylabel(self.aes['y'])
 
     def subtitle(self, subtitle=None, **kwargs):
         if type(subtitle) in (list, tuple):
