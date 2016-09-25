@@ -1,3 +1,8 @@
+# ignore pycache
+*/__pycache__/
+*/__pycache__/*
+*.pyc
+
 # ignore Pycharm project files
 .idea
 .idea/*
