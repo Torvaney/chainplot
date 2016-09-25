@@ -2,7 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # NOTES
-# Need to think about how flexible vs just perosnal use?
+# Need to think about how flexible vs just personal use/convenience?
+#   For some level of flexibility it'll make more sense just to start from scratch w/ graphics of grammar
+# How much am I just going to rip off ggplot? And how much to adapt to a more 'pythonic' approach?
 
 
 # Define some helper functions (should probably go into class as static methods tbh)
@@ -58,23 +60,33 @@ def apply_style_discrete(ax, lookup, categorical):
 
     # Remove extra ticks
     if categorical == 'x':
-        ax.get_xaxis().tick_bottom()
+
+        ax.spines["bottom"].set_visible(False)
+
+        ax.get_yaxis().tick_left()
         ax.tick_params(
-            axis='x',  # changes apply to the x-axis (could do outside of loop?)
+            axis='x',      # changes apply to the x-axis (could do outside of loop?)
             which='both',  # both major and minor ticks are affected
-            left='on',  # ticks along the bottom edge are off
-            right='off'  # ticks along the top edge are off
+            bottom='on',   # ticks along the bottom edge are on
+            top='off'      # ticks along the top edge are off
         )
 
         ax.xaxis.grid(True, which='major', color='dimgray', linestyle='dotted')
-        ax.set_xlim([min(list(lookup.values())) - 1, max(list(lookup.values())) + 1])
+        ax.set_xlim(
+            [min(list(lookup.values())) - 1,
+             max(list(lookup.values())) + 1]
+        )
+
     elif categorical == 'y':
-        ax.get_yaxis().tick_left()
+
+        ax.spines["left"].set_visible(False)
+
+        ax.get_xaxis().tick_bottom()
         ax.tick_params(
-            axis='y',  # changes apply to the y-axis
+            axis='y',      # changes apply to the y-axis
             which='both',  # both major and minor ticks are affected
-            left='on',  # ticks along the bottom edge are off
-            right='off'  # ticks along the top edge are off
+            left='on',     # ticks along the left edge are on
+            right='off'    # ticks along the right edge are off
         )
 
         ax.yaxis.grid(True, which='major', color='dimgray', linestyle='dotted')
@@ -129,7 +141,7 @@ class Plot:
 
         return self
 
-    def points(self, categorical=None, aes=None, **kwargs):
+    def points(self, categorical=None, **kwargs):
         categories = sorted(self.data[self.aes['by']].unique())
 
         # Fix awful americanisms
@@ -169,7 +181,7 @@ class Plot:
 
         return self
 
-    def histogram(self, aes=None, **kwargs):
+    def histogram(self, **kwargs):
         categories = sorted(self.data[self.aes['by']].unique())
 
         for i, ax in enumerate(self.axes):
@@ -185,6 +197,28 @@ class Plot:
 
             else:
                 apply_style_blank(ax)
+
+        return self
+
+    def lines(self, **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
+
+        if 'colour' in kwargs.keys():
+            kwargs['color'] = kwargs['colour']
+            kwargs.pop('colour', 0)
+
+        for i, ax in enumerate(self.axes):
+            if i < len(categories):
+
+                subcat = categories[i]
+                plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
+
+                xdata = plot_data[self.aes['x']]
+                ydata = plot_data[self.aes['y']]
+
+                # could create a kwargs dict dynamically or through a loop or something
+                ax.plot(xdata, ydata, **kwargs)
+                apply_style_continuous(ax)
 
         return self
 
@@ -238,5 +272,30 @@ class Plot:
 
         return self
 
+    def subtitle(self, subtitle=None, **kwargs):
+        if type(subtitle) in (list, tuple):
+            for i, ax in enumerate(self.axes):
+                ax.set_title(subtitle[i], **kwargs)
+        else:
+            for ax in self.axes:
+                ax.set_title(subtitle, **kwargs)
+
+        return self
+
     def title(self, title=None, **kwargs):
         self.fig.suptitle(title, **kwargs)
+
+        return self
+
+    def pipe(self, obj, func):
+        if obj == 'fig':
+            func(self.fig)
+
+        if obj == 'ax':
+            for ax in self.axes:
+                func(ax)
+
+        return self
+
+    def save(self, file_location, **kwargs):
+        self.fig.savefig(file_location, **kwargs)
