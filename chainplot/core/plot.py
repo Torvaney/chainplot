@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from chainplot.core import style
 
 # NOTES
 # Need to think about how flexible vs just personal use/convenience?
@@ -90,7 +91,7 @@ def apply_style_blank(ax):
 
 
 class Plot:
-    def __init__(self, data, aes=None, **kwargs):
+    def __init__(self, data, aes=None, style=None, **kwargs):
         self.data = data
         self.aes = aes
         self.fig = plt.figure(**kwargs)
@@ -100,6 +101,11 @@ class Plot:
             'y': 'y',
             'by': 'by'
         }
+
+        if style is None:
+            self.style = style.DEFAULT_STYLE
+        else:
+            self.style = style
 
         self.fig.set_facecolor('snow')
 
@@ -286,7 +292,12 @@ class Plot:
             ax.set_xlabel(self.aes['x'])
             ax.set_ylabel(self.aes['y'])
 
+        return self
+
     def subtitle(self, subtitle=None, **kwargs):
+        for k, v in self.style['subtitle'].items():
+            kwargs[k] = v
+
         if type(subtitle) in (list, tuple):
             for i, ax in enumerate(self.axes):
                 ax.set_title(subtitle[i], **kwargs)
@@ -297,6 +308,10 @@ class Plot:
         return self
 
     def title(self, title=None, **kwargs):
+
+        for k, v in self.style['title'].items():
+            kwargs[k] = v
+
         self.fig.suptitle(title, **kwargs)
 
         return self
