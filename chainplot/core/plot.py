@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from chainplot.core import style
+import chainplot.core.style as plot_style
 
 # NOTES
 # Need to think about how flexible vs just personal use/convenience?
@@ -103,7 +103,7 @@ class Plot:
         }
 
         if style is None:
-            self.style = style.DEFAULT_STYLE
+            self.style = plot_style.DEFAULT_STYLE
         else:
             self.style = style
 
@@ -273,6 +273,26 @@ class Plot:
             ax.set_ylim(lims, **kwargs)
         return self
 
+    def xlab(self, *args, **kwargs):
+        for k, v in self.style['axes_text'].items():
+            if k not in kwargs.keys():
+                kwargs[k] = v
+
+        for ax in self.axes:
+            ax.set_xlabel(*args, **kwargs)
+
+        return self
+
+    def ylab(self, *args, **kwargs):
+        for k, v in self.style['axes_text'].items():
+            if k not in kwargs.keys():
+                kwargs[k] = v
+
+        for ax in self.axes:
+            ax.set_ylabel(*args, **kwargs)
+
+        return self
+
     # Style functions
     def apply_style_continuous(self):
 
@@ -280,12 +300,15 @@ class Plot:
             ax.spines["bottom"].set_color('dimgray')
             ax.spines["left"].set_color('dimgray')
             ax.tick_params(colors='dimgray')
+
             # Remove top and bottom spines
             ax.spines["top"].set_visible(False)
             ax.spines["right"].set_visible(False)
+
             # Remove extra ticks
             ax.get_xaxis().tick_bottom()
             ax.get_yaxis().tick_left()
+
             # Set background colour
             ax.set_axis_bgcolor('snow')
 
@@ -296,7 +319,8 @@ class Plot:
 
     def subtitle(self, subtitle=None, **kwargs):
         for k, v in self.style['subtitle'].items():
-            kwargs[k] = v
+            if k not in kwargs.keys():
+                kwargs[k] = v
 
         if type(subtitle) in (list, tuple):
             for i, ax in enumerate(self.axes):
@@ -310,7 +334,8 @@ class Plot:
     def title(self, title=None, **kwargs):
 
         for k, v in self.style['title'].items():
-            kwargs[k] = v
+            if k not in kwargs.keys():
+                kwargs[k] = v
 
         self.fig.suptitle(title, **kwargs)
 

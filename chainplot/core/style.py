@@ -11,7 +11,7 @@ DEFAULT_STYLE = {
         'fontsize': 14,
         'color': 'dimgray'
     },
-    'axis_text': {
+    'axes_text': {
         'fontsize': 16,
         'color': 'dimgray'
     }
