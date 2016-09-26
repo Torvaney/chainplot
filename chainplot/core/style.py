@@ -8,11 +8,31 @@ DEFAULT_STYLE = {
     },
     'subtitle': {
         'loc': 'left',
-        'fontsize': 14,
-        'color': 'dimgray'
-    },
-    'axes_text': {
         'fontsize': 16,
         'color': 'dimgray'
+    },
+    'axes': {
+        'text': {
+            'fontsize': 16,
+            'color': 'dimgray'
+        },
+        'spines': {
+            'color': 'dimgray'
+        },
+        'background': {
+            'color': 'snow'
+        }
+    },
+    'legend': {
+        'loc': 'upper left',
+        'frameon': False
+    },
+    'scales': {
+        'cmap': 'viridis'
+    },
+    'fig': {
+        'background': {
+            'color': 'snow'
+        }
     }
 }
