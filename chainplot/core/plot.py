@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import chainplot.core.style as plot_style
-from collections import Counter
+import re
 
 # NOTES
 # Need to think about how flexible vs just personal use/convenience?
@@ -12,7 +12,8 @@ from collections import Counter
 
 # Define some helper functions (should probably go into class as static methods tbh)
 def categorical_lookup(series):
-    unique_vals = sorted(series.unique())
+    s = series.copy()
+    unique_vals = sorted(s.unique())
     return dict(zip(unique_vals, np.arange(1, len(unique_vals) + 1)))
 
 
@@ -36,6 +37,21 @@ def check_dict(input_dict, val=None, replacement=''):
         if v is val:
             output_dict[k] = replacement
     return output_dict
+
+
+def split_kwargs(kwargs_dict, prefix='shadow_'):
+    input_dict = kwargs_dict.copy()
+    output_dict = {}
+    shadow_dict = {}
+
+    for k, v in input_dict.items():
+        if bool(re.match(prefix + '.*', k)):
+            shadow_k = re.sub(prefix, '', k)
+            shadow_dict[shadow_k] = v
+        else:
+            output_dict[k] = v
+
+    return output_dict, shadow_dict
 
 
 def to_kwargs(**kwargs):
@@ -200,7 +216,7 @@ class Plot:
 
         return self
 
-    def aesthetics(self, x=None, y=None, by=None, **kwargs):
+    def aesthetics(self, x=None, y=None, by=None, shadow=False, **kwargs):
         if by is None:
             self.number_of_plots = 1
 
@@ -218,6 +234,7 @@ class Plot:
         self.aes['x'] = x
         self.aes['y'] = y
         self.aes['by'] = by
+        self.aes['shadow'] = shadow
 
         for k, v in kwargs.items():
             self.aes[k] = v
@@ -232,7 +249,10 @@ class Plot:
     def points(self, categorical=None, **kwargs):
         categories = sorted(self.data[self.aes['by']].unique())
 
+        kwargs, shadow_kwargs = split_kwargs(kwargs)
+
         kwargs = britishdict(kwargs)
+        shadow_kwargs = britishdict(shadow_kwargs)
 
         # Add colour
         if 'colour' in self.aes.keys():
@@ -260,6 +280,14 @@ class Plot:
                     ax.scatter(xdata, ydata.replace(lookup),
                                cmap=self.style['scales']['cmap'],
                                **kwargs)
+
+                    if self.aes['shadow'] is True:
+                        shadow_data = self.data.loc[lambda df: df[self.aes['by']] != subcat]
+                        shadow_x = shadow_data[self.aes['x']]
+                        shadow_y = shadow_data[self.aes['y']]
+
+                        ax.scatter(shadow_x, shadow_y.replace(lookup),
+                                   color='k', alpha=0.2, **shadow_kwargs)
 
                 else:  # if both variables are continuous
                     lookup = None
