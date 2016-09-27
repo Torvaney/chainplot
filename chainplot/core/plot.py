@@ -1,8 +1,11 @@
+import re
+
 import matplotlib.pyplot as plt
 import numpy as np
-import chainplot.core.style as plot_style
 from scipy.stats.kde import gaussian_kde
-import re
+
+import chainplot.core.style as plot_style
+
 
 # NOTES
 # Need to think about how flexible vs just personal use/convenience?
