@@ -25,8 +25,8 @@ def facet_dimensions(number_of_plots):
     if sqrt_nplots > (side_length + 0.5):
         nrows += 1
         ncols += 1
-    elif sqrt_nplots > (side_length):
-        nrows += 1
+    elif sqrt_nplots > side_length:
+        ncols += 1
 
     return nrows, ncols
 
@@ -218,6 +218,7 @@ class Plot:
         return self
 
     def aesthetics(self, x=None, y=None, by=None, shadow=False, **kwargs):
+        # Should shadow really go in aesthetics? We're not actually mapping an attribute to a var...
         if by is None:
             self.number_of_plots = 1
 
