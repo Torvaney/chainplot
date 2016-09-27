@@ -130,35 +130,36 @@ class Plot:
 
         labels = check_dict(self.labels, val=None, replacement=' ')
 
-        if len(self.axes) > 1 and self.labels['subtitle'] is None:
-            subtitle = sorted(self.data[self.aes['by']].unique())
-        else:
-            subtitle = labels['subtitle']
+        if self.axes is not None:
+            if len(self.axes) > 1 and self.labels['subtitle'] is None:
+                subtitle = sorted(self.data[self.aes['by']].unique())
+            else:
+                subtitle = labels['subtitle']
 
-        for i, ax in enumerate(self.axes):
-            ax.spines['bottom'].set_color(style['axes']['spines']['color'])
-            ax.spines['left'].set_color(style['axes']['spines']['color'])
-            ax.tick_params(colors=style['axes']['spines']['color'])
+            for i, ax in enumerate(self.axes):
+                ax.spines['bottom'].set_color(style['axes']['spines']['color'])
+                ax.spines['left'].set_color(style['axes']['spines']['color'])
+                ax.tick_params(colors=style['axes']['spines']['color'])
 
-            # Remove top and bottom spines
-            ax.spines["top"].set_visible(False)
-            ax.spines["right"].set_visible(False)
-            # Remove extra ticks
-            ax.get_xaxis().tick_bottom()
-            ax.get_yaxis().tick_left()
+                # Remove top and bottom spines
+                ax.spines["top"].set_visible(False)
+                ax.spines["right"].set_visible(False)
+                # Remove extra ticks
+                ax.get_xaxis().tick_bottom()
+                ax.get_yaxis().tick_left()
 
-            # Set background colour
-            ax.set_axis_bgcolor(style['axes']['background']['color'])
+                # Set background colour
+                ax.set_axis_bgcolor(style['axes']['background']['color'])
 
-            # Need to check row and column
-            nrows, ncols = facet_dimensions(self.number_of_plots)
+                # Need to check row and column
+                nrows, ncols = facet_dimensions(self.number_of_plots)
 
-            if (i % ncols) == 0:
-                ax.set_ylabel(labels['ylab'], **style['axes']['text'])
-            if (i // ncols) == (nrows - 1):
-                ax.set_xlabel(labels['xlab'], **style['axes']['text'])
+                if (i % ncols) == 0:
+                    ax.set_ylabel(labels['ylab'], **style['axes']['text'])
+                if (i // ncols) == (nrows - 1):
+                    ax.set_xlabel(labels['xlab'], **style['axes']['text'])
 
-            ax.set_title(subtitle[i], **style['subtitle'])
+                ax.set_title(subtitle[i], **style['subtitle'])
 
         self.fig.set_facecolor(self.style['fig']['background']['color'])
 
