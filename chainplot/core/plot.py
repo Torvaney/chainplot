@@ -121,6 +121,10 @@ class Plot:
 
         self.fig.set_facecolor(self.style['fig']['background']['color'])
 
+    def alter_data(self, data):
+        self.data = data
+        return self
+
     def alter_style(self, newstyle):
         self.style = combine_dict(self.style, newstyle)
         return self.apply_style()
