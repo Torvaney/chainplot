@@ -35,7 +35,7 @@ DEFAULT_STYLE = {
             'color': 'snow'
         }
     },
-    'shadow_default': {
+    'shadow_defaults': {
         'points': {
             'color': 'k',
             'alpha': 0.2
