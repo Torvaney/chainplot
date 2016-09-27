@@ -31,7 +31,7 @@ def facet_dimensions(number_of_plots):
     return nrows, ncols
 
 
-def check_dict(input_dict, val=None, replacement=''):
+def replace_dict(input_dict, val=None, replacement=''):
     output_dict = input_dict.copy()
     for k, v in output_dict.items():
         if v is val:
@@ -128,7 +128,7 @@ class Plot:
         if style is None:
             style = self.style
 
-        labels = check_dict(self.labels, val=None, replacement=' ')
+        labels = replace_dict(self.labels, val=None, replacement=' ')
 
         if self.axes is not None:
             if len(self.axes) > 1 and self.labels['subtitle'] is None:
@@ -250,10 +250,15 @@ class Plot:
     def points(self, categorical=None, **kwargs):
         categories = sorted(self.data[self.aes['by']].unique())
 
-        kwargs, shadow_kwargs = split_kwargs(kwargs)
+        kwargs, shadow_kwargs = split_kwargs(kwargs, 'shadow_')
 
         kwargs = britishdict(kwargs)
         shadow_kwargs = britishdict(shadow_kwargs)
+
+        shadow_kwargs = combine_dict(
+            self.style['shadow_defaults']['points'],
+            shadow_kwargs
+        )
 
         # Add colour
         if 'colour' in self.aes.keys():
@@ -276,6 +281,14 @@ class Plot:
                                cmap=self.style['scales']['cmap'],
                                **kwargs)
 
+                    if self.aes['shadow'] is True:
+                        shadow_data = self.data.loc[lambda df: df[self.aes['by']] != subcat]
+                        shadow_x = shadow_data[self.aes['x']]
+                        shadow_y = shadow_data[self.aes['y']]
+
+                        ax.scatter(shadow_x.replace(lookup), shadow_y,
+                                   **shadow_kwargs)
+
                 elif categorical is 'y':
                     lookup = categorical_lookup(plot_data[self.aes['y']])
                     ax.scatter(xdata, ydata.replace(lookup),
@@ -288,7 +301,7 @@ class Plot:
                         shadow_y = shadow_data[self.aes['y']]
 
                         ax.scatter(shadow_x, shadow_y.replace(lookup),
-                                   color='k', alpha=0.2, **shadow_kwargs)
+                                   **shadow_kwargs)
 
                 else:  # if both variables are continuous
                     lookup = None
