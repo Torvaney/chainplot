@@ -393,6 +393,10 @@ class Plot:
 
     # Styling
 
+    def tight_layout(self, *args, **kwargs):
+        self.fig.tight_layout(*args, **kwargs)
+        return self
+
     def xlim(self, lims, **kwargs):
         for ax in self.axes:
             ax.set_xlim(lims, **kwargs)
