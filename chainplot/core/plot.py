@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import chainplot.core.style as plot_style
+from scipy.stats.kde import gaussian_kde
 import re
 
 # NOTES
@@ -341,6 +342,24 @@ class Plot:
 
             else:
                 ax.axis('off')
+
+        return self.apply_style()
+
+    def density(self, **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
+
+        for i, ax in enumerate(self.axes):
+            if i < len(categories):
+                subcat = categories[i]
+                plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
+
+                xdensity = gaussian_kde(plot_data[self.aes['x']], **kwargs)
+
+                xrange = self.data_range('x')
+                xdata = np.linspace(xrange[0], xrange[1], 1000)
+                ydata = xdensity.pdf(xdata)
+
+                ax.plot(xdata, ydata)
 
         return self.apply_style()
 
