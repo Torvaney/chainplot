@@ -282,7 +282,7 @@ class Plot:
         kwargs = britishdict(kwargs)
 
         if 'binwidth' in kwargs.keys():
-            xrange = self.xrange()
+            xrange = self.data_range(dimension='x')
             kwargs['bins'] = np.arange(xrange[0], xrange[1], kwargs['binwidth'])
             kwargs.pop('binwidth', 0)
 
@@ -390,6 +390,11 @@ class Plot:
             ax.plot(xline, yline, **kwargs)
 
         return self
+
+    # Smaller helper functions
+
+    def data_range(self, dimension):
+        return min(self.data[self.aes[dimension]]), max(self.data[self.aes[dimension]])
 
     # Styling
 
