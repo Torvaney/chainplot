@@ -63,12 +63,11 @@ def britishdict(argdict):
     outdict = argdict.copy()
 
     # Fix awful americanisms
-    if 'colour' in outdict.keys():
-        outdict['color'] = outdict['colour']
-        outdict.pop('colour', 0)
-    if 'edgecolour' in outdict.keys():
-        outdict['edgecolor'] = outdict['edgecolour']
-        outdict.pop('edgecolour', 0)
+    for key, value in outdict.items():
+        if bool(re.match('.*colour.*', key)):
+            amerikey = re.sub('colour', 'color', key)
+            outdict[amerikey] = value
+            outdict.pop(key, 0)
 
     return outdict
 
@@ -352,18 +351,20 @@ class Plot:
     def density(self, **kwargs):
         categories = sorted(self.data[self.aes['by']].unique())
 
+        kwargs = britishdict(kwargs)
+
         for i, ax in enumerate(self.axes):
             if i < len(categories):
                 subcat = categories[i]
                 plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
 
-                xdensity = gaussian_kde(plot_data[self.aes['x']], **kwargs)
+                xdensity = gaussian_kde(plot_data[self.aes['x']])
 
                 xrange = self.data_range('x')
                 xdata = np.linspace(xrange[0], xrange[1], 1000)
                 ydata = xdensity.pdf(xdata)
 
-                ax.plot(xdata, ydata)
+                ax.plot(xdata, ydata, **kwargs)
 
         return self.apply_style()
 
