@@ -409,14 +409,20 @@ class Plot:
         return self
 
     def vline(self, intercept=0, yrange=None, annotation='', **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
         kwargs = britishdict(kwargs)
 
-        if callable(intercept):  # change this to function for each subplot?
-            intercept = intercept(self.data[self.aes['x']])
+        for i, ax in enumerate(self.axes):
+            subcat = categories[i]
+            plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
 
-        for ax in self.axes:
+            if callable(intercept):
+                xintercept = intercept(plot_data[self.aes['x']])
+            else:
+                xintercept = intercept
+
             yline = ax.get_ylim() if yrange is None else yrange
-            xline = [intercept, intercept]
+            xline = [xintercept, xintercept]
             ax.plot(xline, yline, **kwargs)
             ax.annotate(annotation, (xline[1], yline[1]),
                         va='center', ha='right',
@@ -426,14 +432,21 @@ class Plot:
         return self
 
     def hline(self, intercept=0, xrange=None, annotation='', **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
         kwargs = britishdict(kwargs)
 
-        if callable(intercept):
-            intercept = intercept(self.data[self.aes['y']])
+        for i, ax in enumerate(self.axes):
+            subcat = categories[i]
+            plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
 
-        for ax in self.axes:
+            if callable(intercept):
+                yintercept = intercept(plot_data[self.aes['y']])
+            else:
+                yintercept = intercept
+
             xline = ax.get_xlim() if xrange is None else xrange
-            yline = [intercept, intercept]
+            yline = [yintercept, yintercept]
+
             ax.plot(xline, yline, **kwargs)
             ax.annotate(annotation, (xline[1], yline[1]),
                         va='bottom', ha='right',
