@@ -329,12 +329,21 @@ class Plot:
     def histogram(self, **kwargs):
         categories = sorted(self.data[self.aes['by']].unique())
 
-        kwargs = britishdict(kwargs)
+        kwargs, shadow_kwargs = split_kwargs(kwargs, 'shadow_')
 
-        if 'binwidth' in kwargs.keys():
-            xrange = self.data_range(dimension='x')
-            kwargs['bins'] = np.arange(xrange[0], xrange[1], kwargs['binwidth'])
-            kwargs.pop('binwidth', 0)
+        kwargs = britishdict(kwargs)
+        shadow_kwargs = britishdict(shadow_kwargs)
+
+        shadow_kwargs = combine_dict(
+            self.style['shadow_defaults']['points'],
+            shadow_kwargs
+        )
+
+        for kw in [kwargs, shadow_kwargs]:
+            if 'binwidth' in kw.keys():
+                xrange = self.data_range(dimension='x')
+                kw['bins'] = np.arange(xrange[0], xrange[1], kw['binwidth'])
+                kw.pop('binwidth', 0)
 
         for i, ax in enumerate(self.axes):
             if i < len(categories):
@@ -345,6 +354,12 @@ class Plot:
                 xdata = plot_data[self.aes['x']]
 
                 ax.hist(xdata, **kwargs)
+
+                if self.aes['shadow'] is True:
+                    shadow_data = self.data.loc[lambda df: df[self.aes['by']] != subcat]
+                    shadow_x = shadow_data[self.aes['x']]
+
+                    ax.hist(shadow_x, **shadow_kwargs)
 
             else:
                 ax.axis('off')
