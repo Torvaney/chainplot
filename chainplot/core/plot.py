@@ -434,14 +434,15 @@ class Plot:
         return self.apply_style()
 
     def ref_line(self, slope=None, intercept=None, invert=False, **kwargs):
-        if not invert:
-            xline = [min(self.data[self.aes['x']]), max(self.data[self.aes['x']])]
-            yline = [i * slope + intercept for i in xline]
-        else:
-            yline = [min(self.data[self.aes['y']]), max(self.data[self.aes['y']])]
-            xline = [i * slope + intercept for i in yline]
 
         for ax in self.axes:
+            if not invert:
+                xline = ax.get_xlim()
+                yline = [i * slope + intercept for i in xline]
+            else:
+                yline = ax.get_ylim()
+                xline = [i * slope + intercept for i in yline]
+
             ax.plot(xline, yline, **kwargs)
 
         return self
