@@ -505,10 +505,11 @@ class Plot:
             ydata = plot_data[self.aes['y']]
             m, c = np.polyfit(xdata, ydata, 1)
 
-            xline = [min(plot_data[self.aes['x']]), max(plot_data[self.aes['x']])]
+            xline = ax.get_xlim()
             yline = [m * x + c for x in xline]
 
             ax.plot(xline, yline, **kwargs)
+            ax.set_xlim(xline)
 
         return self
 
