@@ -395,6 +395,29 @@ class Plot:
 
         return self.apply_style()
 
+    def label(self, **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
+
+        kwargs = britishdict(kwargs)
+
+        for i, ax in enumerate(self.axes):
+            if i < len(categories):
+
+                subcat = categories[i]
+                plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat].reset_index()
+
+                xdata = plot_data[self.aes['x']]
+                ydata = plot_data[self.aes['y']]
+                txt_data = plot_data[self.aes['label']]
+
+                for txt_i, txt in enumerate(txt_data):
+                    ax.annotate(str(txt), (xdata[txt_i], ydata[txt_i]), **kwargs)
+
+            else:
+                ax.axis('off')
+
+        return self.apply_style()
+
     def ref_line(self, slope=None, intercept=None, invert=False, **kwargs):
         if not invert:
             xline = [min(self.data[self.aes['x']]), max(self.data[self.aes['x']])]
