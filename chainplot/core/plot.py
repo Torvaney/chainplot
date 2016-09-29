@@ -436,6 +436,43 @@ class Plot:
 
         return self.apply_style()
 
+    def error_bars(self, categorical=None, **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
+
+        kwargs = britishdict(kwargs)
+
+        for i, ax in enumerate(self.axes):
+            if i < len(categories):
+
+                subcat = categories[i]
+                plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
+
+                xdata = plot_data[self.aes['x']]
+                ydata = plot_data[self.aes['y']]
+                xerror = plot_data[self.aes['x_error']] if ('x_error' in self.aes.keys()) else None
+                yerror = plot_data[self.aes['y_error']] if ('y_error' in self.aes.keys()) else None
+
+                if categorical is 'x':
+                    lookup = categorical_lookup(plot_data[self.aes['x']])
+                    ax.errorbar(xdata.replace(lookup), ydata, xerr=xerror, yerr=yerror, **kwargs)
+
+                elif categorical is 'y':
+                    lookup = categorical_lookup(plot_data[self.aes['y']])
+                    ax.errorbar(xdata, ydata.replace(lookup), xerr=xerror, yerr=yerror, **kwargs)
+
+                else:  # if both variables are continuous
+                    lookup = None
+                    categorical = None
+                    ax.errorbar(xdata, ydata, xerr=xerror, yerr=yerror, **kwargs)
+
+            else:
+                ax.axis('off')
+
+        if categorical in ('x', 'y'):
+            self.discrete_axis(categorical, lookup)
+
+        return self.apply_style()
+
     def calc_line(self, func, **kwargs):
         categories = sorted(self.data[self.aes['by']].unique())
         kwargs = britishdict(kwargs)
