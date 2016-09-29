@@ -273,12 +273,6 @@ class Plot:
             shadow_kwargs
         )
 
-        # Add colour
-        if 'colour' in self.aes.keys():
-            col_cat = sorted(self.data[self.aes['colour']].unique())
-            col_lookup = categorical_lookup(self.data[self.aes['colour']])
-            kwargs['c'] = self.data[self.aes['colour']].replace(col_lookup)
-
         for i, ax in enumerate(self.axes):
             if i < len(categories):
 
@@ -290,38 +284,30 @@ class Plot:
 
                 if categorical is 'x':
                     lookup = categorical_lookup(plot_data[self.aes['x']])
-                    ax.scatter(xdata.replace(lookup), ydata,
-                               cmap=self.style['scales']['cmap'],
-                               **kwargs)
+                    ax.scatter(xdata.replace(lookup), ydata, **kwargs)
 
                     if self.aes['shadow'] is True:
                         shadow_data = self.data.loc[lambda df: df[self.aes['by']] != subcat]
                         shadow_x = shadow_data[self.aes['x']]
                         shadow_y = shadow_data[self.aes['y']]
 
-                        ax.scatter(shadow_x.replace(lookup), shadow_y,
-                                   **shadow_kwargs)
+                        ax.scatter(shadow_x.replace(lookup), shadow_y, **shadow_kwargs)
 
                 elif categorical is 'y':
                     lookup = categorical_lookup(plot_data[self.aes['y']])
-                    ax.scatter(xdata, ydata.replace(lookup),
-                               cmap=self.style['scales']['cmap'],
-                               **kwargs)
+                    ax.scatter(xdata, ydata.replace(lookup), **kwargs)
 
                     if self.aes['shadow'] is True:
                         shadow_data = self.data.loc[lambda df: df[self.aes['by']] != subcat]
                         shadow_x = shadow_data[self.aes['x']]
                         shadow_y = shadow_data[self.aes['y']]
 
-                        ax.scatter(shadow_x, shadow_y.replace(lookup),
-                                   **shadow_kwargs)
+                        ax.scatter(shadow_x, shadow_y.replace(lookup), **shadow_kwargs)
 
                 else:  # if both variables are continuous
                     lookup = None
                     categorical = None
-                    ax.scatter(xdata, ydata,
-                               cmap=self.style['scales']['cmap'],
-                               **kwargs)
+                    ax.scatter(xdata, ydata, **kwargs)
 
             else:
                 ax.axis('off')
