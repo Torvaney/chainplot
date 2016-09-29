@@ -260,7 +260,7 @@ class Plot:
 
         return self.apply_style()
 
-    def points(self, categorical=None, **kwargs):
+    def points(self, categorical=None, lookup=None, **kwargs):
         categories = sorted(self.data[self.aes['by']].unique())
 
         kwargs, shadow_kwargs = split_kwargs(kwargs, 'shadow_')
@@ -283,7 +283,7 @@ class Plot:
                 ydata = plot_data[self.aes['y']]
 
                 if categorical is 'x':
-                    lookup = categorical_lookup(plot_data[self.aes['x']])
+                    lookup = categorical_lookup(plot_data[self.aes['x']]) if lookup is None else lookup
                     ax.scatter(xdata.replace(lookup), ydata, **kwargs)
 
                     if self.aes['shadow'] is True:
@@ -294,7 +294,7 @@ class Plot:
                         ax.scatter(shadow_x.replace(lookup), shadow_y, **shadow_kwargs)
 
                 elif categorical is 'y':
-                    lookup = categorical_lookup(plot_data[self.aes['y']])
+                    lookup = categorical_lookup(plot_data[self.aes['y']]) if lookup is None else lookup
                     ax.scatter(xdata, ydata.replace(lookup), **kwargs)
 
                     if self.aes['shadow'] is True:
