@@ -586,11 +586,17 @@ class Plot:
 
         return self
 
-    def pipe(self, obj, func):
-        if obj == 'fig':
+    def pipe(self, func, obj=None):
+        if obj is None:
+            func(self)
+
+        elif obj == 'data':
+            self.data = func(self.data)
+
+        elif obj == 'fig':
             func(self.fig)
 
-        if obj == 'ax':
+        elif obj == 'ax':
             for ax in self.axes:
                 func(ax)
 
