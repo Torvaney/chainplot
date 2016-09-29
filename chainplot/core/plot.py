@@ -448,6 +448,8 @@ class Plot:
 
                 ax.plot(xline, yline, **kwargs)
 
+                ax.set_xlim(xlim)
+
         return self
 
     def ref_line(self, slope=None, intercept=None, invert=False, **kwargs):
