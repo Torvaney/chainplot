@@ -13,6 +13,9 @@ import chainplot.core.style as plot_style
 # How much am I just going to rip off ggplot? And how much to adapt to a more 'pythonic' approach?
 # How do I set default styles/subtitles etc in a natural manner?
 
+# Stuff to add:
+# Add ordering for facets/categorical variables
+
 
 # Define some helper functions (should probably go into class as static methods tbh)
 def categorical_lookup(series):
