@@ -436,17 +436,34 @@ class Plot:
 
         return self.apply_style()
 
+    def calc_line(self, func, **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
+        kwargs = britishdict(kwargs)
+
+        for i, ax in enumerate(self.axes):
+            if i < len(categories):
+                xlim = ax.get_xlim()
+                xline = np.linspace(xlim[0], xlim[1], 500)
+                yline = [func(x) for x in xline]
+
+                ax.plot(xline, yline, **kwargs)
+
+        return self
+
     def ref_line(self, slope=None, intercept=None, invert=False, **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
+        kwargs = britishdict(kwargs)
 
-        for ax in self.axes:
-            if not invert:
-                xline = ax.get_xlim()
-                yline = [i * slope + intercept for i in xline]
-            else:
-                yline = ax.get_ylim()
-                xline = [i * slope + intercept for i in yline]
+        for i, ax in enumerate(self.axes):
+            if i < len(categories):
+                if not invert:
+                    xline = ax.get_xlim()
+                    yline = [i * slope + intercept for i in xline]
+                else:
+                    yline = ax.get_ylim()
+                    xline = [i * slope + intercept for i in yline]
 
-            ax.plot(xline, yline, **kwargs)
+                ax.plot(xline, yline, **kwargs)
 
         return self
 
@@ -455,21 +472,22 @@ class Plot:
         kwargs = britishdict(kwargs)
 
         for i, ax in enumerate(self.axes):
-            subcat = categories[i]
-            plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
+            if i < len(categories):
+                subcat = categories[i]
+                plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
 
-            if callable(intercept):
-                xintercept = intercept(plot_data[self.aes['x']])
-            else:
-                xintercept = intercept
+                if callable(intercept):
+                    xintercept = intercept(plot_data[self.aes['x']])
+                else:
+                    xintercept = intercept
 
-            yline = ax.get_ylim() if yrange is None else yrange
-            xline = [xintercept, xintercept]
-            ax.plot(xline, yline, **kwargs)
-            ax.annotate(annotation, (xline[1], yline[1]),
-                        va='center', ha='right',
-                        color=self.style['axes']['text']['color'])
-            ax.set_ylim(yline)
+                yline = ax.get_ylim() if yrange is None else yrange
+                xline = [xintercept, xintercept]
+                ax.plot(xline, yline, **kwargs)
+                ax.annotate(annotation, (xline[1], yline[1]),
+                            va='center', ha='right',
+                            color=self.style['axes']['text']['color'])
+                ax.set_ylim(yline)
 
         return self
 
@@ -478,22 +496,23 @@ class Plot:
         kwargs = britishdict(kwargs)
 
         for i, ax in enumerate(self.axes):
-            subcat = categories[i]
-            plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
+            if i < len(categories):
+                subcat = categories[i]
+                plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
 
-            if callable(intercept):
-                yintercept = intercept(plot_data[self.aes['y']])
-            else:
-                yintercept = intercept
+                if callable(intercept):
+                    yintercept = intercept(plot_data[self.aes['y']])
+                else:
+                    yintercept = intercept
 
-            xline = ax.get_xlim() if xrange is None else xrange
-            yline = [yintercept, yintercept]
+                xline = ax.get_xlim() if xrange is None else xrange
+                yline = [yintercept, yintercept]
 
-            ax.plot(xline, yline, **kwargs)
-            ax.annotate(annotation, (xline[1], yline[1]),
-                        va='bottom', ha='right',
-                        color=self.style['axes']['text']['color'])
-            ax.set_xlim(xline)
+                ax.plot(xline, yline, **kwargs)
+                ax.annotate(annotation, (xline[1], yline[1]),
+                            va='bottom', ha='right',
+                            color=self.style['axes']['text']['color'])
+                ax.set_xlim(xline)
 
         return self
 
