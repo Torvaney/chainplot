@@ -240,8 +240,10 @@ class Plot:
 
         nrows, ncols = facet_dimensions(self.number_of_plots)
 
-        axes = [plt.subplot(nrows, ncols, i) for i in range(1, self.number_of_plots + 1)]
-        self.axes = axes
+        # check if there are pre-existing axes
+        if self.axes is None:
+            axes = [plt.subplot(nrows, ncols, i) for i in range(1, self.number_of_plots + 1)]
+            self.axes = axes
 
         self.aes['x'] = x
         self.aes['y'] = y
