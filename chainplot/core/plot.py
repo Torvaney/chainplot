@@ -3,6 +3,7 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats.kde import gaussian_kde
+from adjustText import adjust_text
 
 import chainplot.core.style as plot_style
 
@@ -401,10 +402,11 @@ class Plot:
 
         return self.apply_style()
 
-    def label(self, **kwargs):
+    def label(self, categorical=None, lookup=None, check_overlap=True, **kwargs):
         categories = sorted(self.data[self.aes['by']].unique())
 
         kwargs = britishdict(kwargs)
+        kwargs, adjust_kwargs = split_kwargs(kwargs, 'adj_')
 
         for i, ax in enumerate(self.axes):
             if i < len(categories):
@@ -416,8 +418,20 @@ class Plot:
                 ydata = plot_data[self.aes['y']]
                 txt_data = plot_data[self.aes['label']]
 
+                if categorical is 'x':
+                    lookup = categorical_lookup(plot_data[self.aes['x']]) if lookup is None else lookup
+                    xdata = xdata.replace(lookup)
+                if categorical is 'y':
+                    lookup = categorical_lookup(plot_data[self.aes['y']]) if lookup is None else lookup
+                    ydata = ydata.replace(lookup)
+
+                texts = []
                 for txt_i, txt in enumerate(txt_data):
-                    ax.annotate(str(txt), (xdata[txt_i], ydata[txt_i]), **kwargs)
+                    # ax.annotate(str(txt), (xdata[txt_i], ydata[txt_i]), **kwargs)  # old method
+                    texts.append(ax.text(xdata[txt_i], ydata[txt_i], str(txt), **kwargs))
+
+                if check_overlap:
+                    adjust_text(texts, xdata, ydata, ax=ax, **adjust_kwargs)
 
             else:
                 ax.axis('off')
