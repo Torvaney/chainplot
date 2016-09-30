@@ -402,7 +402,7 @@ class Plot:
 
         return self.apply_style()
 
-    def label(self, categorical=None, lookup=None, check_overlap=True, **kwargs):
+    def label(self, categorical=None, lookup=None, check_overlap=False, **kwargs):
         categories = sorted(self.data[self.aes['by']].unique())
 
         kwargs = britishdict(kwargs)
