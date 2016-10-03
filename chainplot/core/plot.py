@@ -584,6 +584,12 @@ class Plot:
 
     # Styling
 
+    def legend(self, legend_plots=(0, ), *args, **kwargs):
+        for i in legend_plots:
+            ax = self.axes[i]
+            ax.legend(*args, **kwargs)
+        return self
+
     def tight_layout(self, *args, **kwargs):
         self.fig.tight_layout(*args, **kwargs)
         return self
