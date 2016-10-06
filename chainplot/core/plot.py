@@ -402,6 +402,35 @@ class Plot:
 
         return self.apply_style()
 
+    def segments(self, **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
+
+        if 'colour' in kwargs.keys():
+            kwargs['color'] = kwargs['colour']
+            kwargs.pop('colour', 0)
+
+        for i, ax in enumerate(self.axes):
+            if i < len(categories):
+
+                subcat = categories[i]
+                plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
+
+                xdata = plot_data[self.aes['x']]
+                ydata = plot_data[self.aes['y']]
+                x2data = plot_data[self.aes['x2']]
+                y2data = plot_data[self.aes['y2']]
+
+                for xi in range(len(xdata)):
+                    x = (xdata[xi], x2data[xi])
+                    y = (ydata[xi], y2data[xi])
+
+                    ax.plot(x, y, **kwargs)
+
+            else:
+                ax.axis('off')
+
+        return self.apply_style()
+
     def label(self, categorical=None, lookup=None, check_overlap=False, **kwargs):
         categories = sorted(self.data[self.aes['by']].unique())
 
