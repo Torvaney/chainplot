@@ -107,7 +107,8 @@ class Plot:
         self.aes = {
             'x': 'x',
             'y': 'y',
-            'by': 'by'
+            'by': None,
+            'shadow': False
         }
 
         if labels is None:
@@ -228,12 +229,19 @@ class Plot:
 
         return self
 
-    def aesthetics(self, x=None, y=None, by=None, shadow=False, **kwargs):
-        # Should shadow really go in aesthetics? We're not actually mapping an attribute to a var...
+    def aesthetics(self, **kwargs):
+        # Make a new 'aesthetics' class to make this code cleaner
+
+        # update aesthetics
+        kwargs = combine_dict(self.aes, kwargs)
+
+        by = kwargs['by']
+        shadow = kwargs['shadow']
+
         if by is None:
             self.number_of_plots = 1
 
-            # Create dummy variable for faceting
+            # Create dummy variable for faceting (there must be a netter way than this, right?)
             by = 'by'
             self.data['by'] = 1
         else:
@@ -246,8 +254,6 @@ class Plot:
             axes = [plt.subplot(nrows, ncols, i) for i in range(1, self.number_of_plots + 1)]
             self.axes = axes
 
-        self.aes['x'] = x
-        self.aes['y'] = y
         self.aes['by'] = by
         self.aes['shadow'] = shadow
 
@@ -413,7 +419,7 @@ class Plot:
             if i < len(categories):
 
                 subcat = categories[i]
-                plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
+                plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat].reset_index(drop=True)
 
                 xdata = plot_data[self.aes['x']]
                 ydata = plot_data[self.aes['y']]
