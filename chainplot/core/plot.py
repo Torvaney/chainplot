@@ -3,6 +3,7 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats.kde import gaussian_kde
+import scipy.optimize as op
 from adjustText import adjust_text
 
 import chainplot.core.style as plot_style
@@ -16,6 +17,8 @@ import chainplot.core.style as plot_style
 
 # Stuff to add:
 # Add ordering for facets/categorical variables
+# Change names of methods to `layer_*`
+# Move non-plotting functions to another directory
 
 
 # Define some helper functions (should probably go into class as static methods tbh)
@@ -230,7 +233,8 @@ class Plot:
         return self
 
     def aesthetics(self, **kwargs):
-        # Make a new 'aesthetics' class to make this code cleaner
+        # rename to `map`
+        # Make a new `mappings` class to make this code cleaner
 
         # update aesthetics
         kwargs = combine_dict(self.aes, kwargs)
@@ -438,6 +442,7 @@ class Plot:
         return self.apply_style()
 
     def label(self, categorical=None, lookup=None, check_overlap=False, **kwargs):
+        # rename to `text`
         categories = sorted(self.data[self.aes['by']].unique())
 
         kwargs = britishdict(kwargs)
@@ -611,6 +616,27 @@ class Plot:
             ax.set_xlim(xline)
 
         return self
+
+    def fit_line(self, objective_function, **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
+
+        for i, ax in enumerate(self.axes):
+            subcat = categories[i]
+            plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
+
+            xdata = plot_data[self.aes['x']]
+            ydata = plot_data[self.aes['y']]
+
+            params, _ = op.curve_fit(objective_function, xdata, ydata)
+
+            xlims = ax.get_xlim()
+            x = np.linspace(xlims[0], xlims[1], 100)
+            y = objective_function(x, *params)
+
+            ax.plot(x, y, **kwargs)
+            ax.set_xlim(xlims)
+
+        return self.apply_style()
 
     # Smaller helper functions
 
