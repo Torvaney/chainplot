@@ -5,4 +5,6 @@ Api stolen/inspired by bits of pandas and ggplot2
 
 TODO:
  * Add scales mapping (colour, size)
+ * Add some decent documentation
+ * rename some methods
  
