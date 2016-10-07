@@ -548,7 +548,7 @@ class Plot:
 
         return self
 
-    def vline(self, intercept=0, yrange=None, annotation='', **kwargs):
+    def vline(self, intercept=0, y_range=None, annotation='', **kwargs):
         categories = sorted(self.data[self.aes['by']].unique())
         kwargs = britishdict(kwargs)
 
@@ -562,7 +562,7 @@ class Plot:
                 else:
                     xintercept = intercept
 
-                yline = ax.get_ylim() if yrange is None else yrange
+                yline = ax.get_ylim() if y_range is None else y_range
                 xline = [xintercept, xintercept]
                 ax.plot(xline, yline, **kwargs)
                 ax.annotate(annotation, (xline[1], yline[1]),
@@ -572,7 +572,7 @@ class Plot:
 
         return self
 
-    def hline(self, intercept=0, xrange=None, annotation='', **kwargs):
+    def hline(self, intercept=0, x_range=None, annotation='', **kwargs):
         categories = sorted(self.data[self.aes['by']].unique())
         kwargs = britishdict(kwargs)
 
@@ -586,7 +586,7 @@ class Plot:
                 else:
                     yintercept = intercept
 
-                xline = ax.get_xlim() if xrange is None else xrange
+                xline = ax.get_xlim() if x_range is None else x_range
                 yline = [yintercept, yintercept]
 
                 ax.plot(xline, yline, **kwargs)
@@ -600,6 +600,7 @@ class Plot:
     def trendline(self, **kwargs):
         # edit to allow any polynomial
         categories = sorted(self.data[self.aes['by']].unique())
+        kwargs = britishdict(kwargs)
 
         for i, ax in enumerate(self.axes):
             subcat = categories[i]
@@ -619,6 +620,7 @@ class Plot:
 
     def fit_line(self, objective_function, **kwargs):
         categories = sorted(self.data[self.aes['by']].unique())
+        kwargs = britishdict(kwargs)
 
         for i, ax in enumerate(self.axes):
             subcat = categories[i]
@@ -641,6 +643,7 @@ class Plot:
     # Smaller helper functions
 
     def data_range(self, dimension):
+        # could put this elsewhere in a different utils file?
         return min(self.data[self.aes[dimension]]), max(self.data[self.aes[dimension]])
 
     # Styling
