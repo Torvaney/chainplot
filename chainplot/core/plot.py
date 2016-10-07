@@ -1,14 +1,11 @@
-import re
-
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.stats.kde import gaussian_kde
 import scipy.optimize as op
 from adjustText import adjust_text
+from scipy.stats.kde import gaussian_kde
 
 import chainplot.core.style as plot_style
 from chainplot.utils.dict_tools import replace_dict, split_kwargs, britishdict, combine_dict
-
 
 # NOTES
 # Need to think about how flexible vs just personal use/convenience?
@@ -579,11 +576,15 @@ class Plot:
             params, _ = op.curve_fit(objective_function, xdata, ydata)
 
             xlims = ax.get_xlim()
+            ylims = ax.get_ylim()
+
             x = np.linspace(xlims[0], xlims[1], 100)
             y = objective_function(x, *params)
 
             ax.plot(x, y, **kwargs)
+
             ax.set_xlim(xlims)
+            ax.set_ylim(ylims)
 
         return self.apply_style()
 
