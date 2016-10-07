@@ -177,6 +177,7 @@ class Plot:
 
     def map(self, **kwargs):
         # `update_mapping`?
+        # Split generating axes and setting the mapping into different methods
 
         # update mapping with existing
         kwargs = combine_dict(self.mapping, kwargs)
@@ -189,6 +190,7 @@ class Plot:
 
             # Create dummy variable for faceting (there must be a netter way than this, right?)
             by = 'by'
+            kwargs['by'] = 'by'
             self.data['by'] = 1
         else:
             self.number_of_plots = len(self.data[by].unique())

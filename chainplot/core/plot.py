@@ -191,6 +191,7 @@ class Plot:
 
             # Create dummy variable for faceting (there must be a netter way than this, right?)
             by = 'by'
+            kwargs['by'] = 'by'
             self.data['by'] = 1
         else:
             self.number_of_plots = len(self.data[by].unique())
