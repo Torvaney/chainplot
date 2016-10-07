@@ -646,6 +646,12 @@ class Plot:
         # could put this elsewhere in a different utils file?
         return min(self.data[self.aes[dimension]]), max(self.data[self.aes[dimension]])
 
+    def check_mapping(self, mapname):
+        try:
+            self.aes[mapname]
+        except KeyError:
+            print('No mapping for required argument \'' + mapname + '\' specified.')
+
     # Styling
 
     def legend(self, legend_plots=(0, ), *args, **kwargs):
