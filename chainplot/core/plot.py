@@ -6,6 +6,7 @@ from scipy.stats.kde import gaussian_kde
 
 import chainplot.core.style as plot_style
 from chainplot.utils.dict_tools import replace_dict, split_kwargs, britishdict, combine_dict
+from chainplot.utils.string_tools import prettify
 
 
 # NOTES
@@ -214,7 +215,7 @@ class Plot:
         # Set default labels
         for lab in ('x', 'y'):
             if self.labels[lab + 'lab'] is None:
-                self.labels[lab + 'lab'] = self.mapping[lab]
+                self.labels[lab + 'lab'] = prettify(self.mapping[lab])
 
         return self.apply_style()
 
