@@ -70,6 +70,10 @@ class Plot:
         else:
             self.labels = labels.copy()
 
+        # Set style
+        if type(style) == str:
+            style = plot_style.themes[style.lower()]
+
         self.style = combine_dict(
             plot_style.DEFAULT_STYLE,
             style.copy()
