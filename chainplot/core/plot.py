@@ -70,7 +70,10 @@ class Plot:
         else:
             self.labels = labels.copy()
 
-        self.style = style.copy()
+        self.style = combine_dict(
+            plot_style.DEFAULT_STYLE,
+            style.copy()
+        )
 
         self.fig.set_facecolor(self.style['fig']['background']['color'])
 
