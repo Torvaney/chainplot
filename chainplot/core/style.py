@@ -42,6 +42,9 @@ DEFAULT_STYLE = {
         }
     },
     'layers': {
-        'general' :
+        'general': {
+            'edgecolor': 'None',
+            'color': 'None'
+        }
     }
 }
