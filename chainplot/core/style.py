@@ -42,9 +42,27 @@ DEFAULT_STYLE = {
         }
     },
     'layers': {
-        'general': {
+        'points': {
             'edgecolor': 'None',
-            'color': 'None'
+            'color': 'black',
+            'alpha': 1
+        },
+        'histogram': {
+            'edgecolor': 'None',
+            'color': 'black',
+            'alpha': 1,
+            'bins': 50
+        },
+        'refline': {
+            'color': 'black',
+            'ls': 'dotted'
+        },
+        'trendline': {
+            'color': 'skyblue'
         }
     }
+}
+
+GGPLOT = {
+
 }

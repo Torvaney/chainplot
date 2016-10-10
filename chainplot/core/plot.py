@@ -45,7 +45,7 @@ def facet_dimensions(number_of_plots):
 
 
 class Plot:
-    def __init__(self, data, mapping=None, labels=None, style=None, **kwargs):
+    def __init__(self, data, mapping=None, labels=None, style=plot_style.DEFAULT_STYLE, **kwargs):
         self.data = data.copy()
         self.mapping = mapping
         self.fig = plt.figure(**kwargs)
@@ -70,10 +70,7 @@ class Plot:
         else:
             self.labels = labels.copy()
 
-        if style is None:
-            self.style = plot_style.DEFAULT_STYLE.copy()
-        else:
-            self.style = style.copy()
+        self.style = style.copy()
 
         self.fig.set_facecolor(self.style['fig']['background']['color'])
 
@@ -223,11 +220,16 @@ class Plot:
     def layer_points(self, categorical=None, lookup=None, **kwargs):
         categories = sorted(self.data[self.mapping['by']].unique())
 
+        # argument handling (should really be moved to a method or class or something)
         kwargs, shadow_kwargs = split_kwargs(kwargs, 'shadow_')
 
         kwargs = britishdict(kwargs)
-        shadow_kwargs = britishdict(shadow_kwargs)
+        kwargs = combine_dict(
+            self.style['layers']['points'],
+            kwargs
+        )
 
+        shadow_kwargs = britishdict(shadow_kwargs)
         shadow_kwargs = combine_dict(
             self.style['shadow_defaults']['points'],
             shadow_kwargs
@@ -283,8 +285,12 @@ class Plot:
         kwargs, shadow_kwargs = split_kwargs(kwargs, 'shadow_')
 
         kwargs = britishdict(kwargs)
-        shadow_kwargs = britishdict(shadow_kwargs)
+        kwargs = combine_dict(
+            self.style['layers']['histogram'],
+            kwargs
+        )
 
+        shadow_kwargs = britishdict(shadow_kwargs)
         shadow_kwargs = combine_dict(
             self.style['shadow_defaults']['points'],
             shadow_kwargs
@@ -483,6 +489,10 @@ class Plot:
     def layer_refline(self, slope=None, intercept=None, invert=False, **kwargs):
         categories = sorted(self.data[self.mapping['by']].unique())
         kwargs = britishdict(kwargs)
+        kwargs = combine_dict(
+            self.style['layers']['refline'],
+            kwargs
+        )
 
         for i, ax in enumerate(self.axes):
             if i < len(categories):
@@ -500,6 +510,10 @@ class Plot:
     def layer_vline(self, intercept=0, y_range=None, annotation='', **kwargs):
         categories = sorted(self.data[self.mapping['by']].unique())
         kwargs = britishdict(kwargs)
+        kwargs = combine_dict(
+            self.style['layers']['refline'],
+            kwargs
+        )
 
         for i, ax in enumerate(self.axes):
             if i < len(categories):
@@ -524,6 +538,10 @@ class Plot:
     def layer_hline(self, intercept=0, x_range=None, annotation='', **kwargs):
         categories = sorted(self.data[self.mapping['by']].unique())
         kwargs = britishdict(kwargs)
+        kwargs = combine_dict(
+            self.style['layers']['refline'],
+            kwargs
+        )
 
         for i, ax in enumerate(self.axes):
             if i < len(categories):
@@ -550,6 +568,10 @@ class Plot:
         # is this redundant with fit_line?
         categories = sorted(self.data[self.mapping['by']].unique())
         kwargs = britishdict(kwargs)
+        kwargs = combine_dict(
+            self.style['layers']['trendline'],
+            kwargs
+        )
 
         for i, ax in enumerate(self.axes):
             subcat = categories[i]
@@ -570,6 +592,10 @@ class Plot:
     def layer_fitline(self, objective_function, print_params=False, **kwargs):
         categories = sorted(self.data[self.mapping['by']].unique())
         kwargs = britishdict(kwargs)
+        kwargs = combine_dict(
+            self.style['layers']['trendline'],
+            kwargs
+        )
 
         for i, ax in enumerate(self.axes):
             subcat = categories[i]
