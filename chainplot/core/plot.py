@@ -94,8 +94,9 @@ class Plot:
         if self.axes is not None:
             if len(self.axes) > 1 and self.labels['subtitle'] is None:
                 subtitle = sorted(self.data[self.mapping['by']].unique())
+                subtitle = [prettify(sub) for sub in subtitle]
             else:
-                subtitle = labels['subtitle']
+                subtitle = prettify(labels['subtitle'])
 
             for i, ax in enumerate(self.axes):
                 ax.spines['bottom'].set_color(style['axes']['spines']['color'])
@@ -647,12 +648,13 @@ class Plot:
         if subtitle is None:
             if len(self.axes) > 1:
                 subtitle = sorted(self.data[self.mapping['by']].unique())
+                subtitle = [prettify(sub) for sub in subtitle]
             else:
                 subtitle = ''
 
         if type(subtitle) in (list, tuple):
             for i, ax in enumerate(self.axes):
-                ax.set_title(subtitle[i], **kwargs)
+                ax.set_title(subtitle, **kwargs)
         else:
             for ax in self.axes:
                 ax.set_title(subtitle, **kwargs)
