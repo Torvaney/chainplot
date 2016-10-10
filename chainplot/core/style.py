@@ -40,5 +40,8 @@ DEFAULT_STYLE = {
             'color': 'k',
             'alpha': 0.2
         }
+    },
+    'layers': {
+        'general' :
     }
 }

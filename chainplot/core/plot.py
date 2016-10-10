@@ -13,10 +13,12 @@ from chainplot.utils.dict_tools import replace_dict, split_kwargs, britishdict, 
 #   For some level of flexibility it'll make more sense just to start from scratch w/ graphics of grammar
 # How much am I just going to rip off ggplot? And how much to adapt to a more 'pythonic' approach?
 # How do I set default styles/subtitles etc in a natural manner?
+# new `layer_*` names actually kind of make it harder to read?
+# Given the similarities, can I abstract the layering somehow? (maybe a layer class or something?)
 
 # Stuff to add:
+# Add default styling for layers to style.py
 # Add ordering for facets/categorical variables
-# Change names of methods to `layer_*`
 # Move non-plotting functions to another directory
 
 
@@ -176,8 +178,9 @@ class Plot:
         return self
 
     def map(self, **kwargs):
-        # `update_mapping`?
+        # `alter_mapping`?
         # Split generating axes and setting the mapping into different methods
+        # create new class for managing mappings?
 
         # update mapping with existing
         kwargs = combine_dict(self.mapping, kwargs)
