@@ -42,19 +42,21 @@ def facet_dimensions(number_of_plots):
 
 
 class Plot:
-    def __init__(self, data, mapping=None, labels=None, style=None, **kwargs):
+    # Change methods to copy object before modifying + returning
+    # Make code more EAFP than LBYL?
+    def __init__(self, data, aes=None, labels=None, style=None, **kwargs):
         self.data = data.copy()
-        self.mapping = mapping
+        self.aes = aes
         self.fig = plt.figure(**kwargs)
         self.number_of_plots = None
         self.axes = None
 
         # Set plot defaults
-        self.mapping = {
+        self.aes = {
             'x': 'x',
             'y': 'y',
             'by': None,
-            'shadow': False  # this isn't really a mapping; it should go somewhere else!
+            'shadow': False
         }
 
         if labels is None:
@@ -90,7 +92,7 @@ class Plot:
 
         if self.axes is not None:
             if len(self.axes) > 1 and self.labels['subtitle'] is None:
-                subtitle = sorted(self.data[self.mapping['by']].unique())
+                subtitle = sorted(self.data[self.aes['by']].unique())
             else:
                 subtitle = labels['subtitle']
 
@@ -175,12 +177,12 @@ class Plot:
 
         return self
 
-    def map(self, **kwargs):
-        # `update_mapping`?
-        # Split generating axes and setting the mapping into different methods
+    def aesthetics(self, **kwargs):
+        # rename to `map`
+        # Make a new `mappings` class to make this code cleaner
 
-        # update mapping with existing
-        kwargs = combine_dict(self.mapping, kwargs)
+        # update aesthetics
+        kwargs = combine_dict(self.aes, kwargs)
 
         by = kwargs['by']
         shadow = kwargs['shadow']
@@ -202,21 +204,21 @@ class Plot:
             axes = [plt.subplot(nrows, ncols, i) for i in range(1, self.number_of_plots + 1)]
             self.axes = axes
 
-        self.mapping['by'] = by
-        self.mapping['shadow'] = shadow
+        self.aes['by'] = by
+        self.aes['shadow'] = shadow
 
         for k, v in kwargs.items():
-            self.mapping[k] = v
+            self.aes[k] = v
 
         # Set default labels
         for lab in ('x', 'y'):
             if self.labels[lab + 'lab'] is None:
-                self.labels[lab + 'lab'] = self.mapping[lab]
+                self.labels[lab + 'lab'] = self.aes[lab]
 
         return self.apply_style()
 
-    def layer_points(self, categorical=None, lookup=None, **kwargs):
-        categories = sorted(self.data[self.mapping['by']].unique())
+    def points(self, categorical=None, lookup=None, **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
 
         kwargs, shadow_kwargs = split_kwargs(kwargs, 'shadow_')
 
@@ -232,30 +234,30 @@ class Plot:
             if i < len(categories):
 
                 subcat = categories[i]
-                plot_data = self.data.loc[lambda df: df[self.mapping['by']] == subcat]
+                plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
 
-                xdata = plot_data[self.mapping['x']]
-                ydata = plot_data[self.mapping['y']]
+                xdata = plot_data[self.aes['x']]
+                ydata = plot_data[self.aes['y']]
 
                 if categorical is 'x':
-                    lookup = categorical_lookup(plot_data[self.mapping['x']]) if lookup is None else lookup
+                    lookup = categorical_lookup(plot_data[self.aes['x']]) if lookup is None else lookup
                     ax.scatter(xdata.replace(lookup), ydata, **kwargs)
 
-                    if self.mapping['shadow'] is True:
-                        shadow_data = self.data.loc[lambda df: df[self.mapping['by']] != subcat]
-                        shadow_x = shadow_data[self.mapping['x']]
-                        shadow_y = shadow_data[self.mapping['y']]
+                    if self.aes['shadow'] is True:
+                        shadow_data = self.data.loc[lambda df: df[self.aes['by']] != subcat]
+                        shadow_x = shadow_data[self.aes['x']]
+                        shadow_y = shadow_data[self.aes['y']]
 
                         ax.scatter(shadow_x.replace(lookup), shadow_y, **shadow_kwargs)
 
                 elif categorical is 'y':
-                    lookup = categorical_lookup(plot_data[self.mapping['y']]) if lookup is None else lookup
+                    lookup = categorical_lookup(plot_data[self.aes['y']]) if lookup is None else lookup
                     ax.scatter(xdata, ydata.replace(lookup), **kwargs)
 
-                    if self.mapping['shadow'] is True:
-                        shadow_data = self.data.loc[lambda df: df[self.mapping['by']] != subcat]
-                        shadow_x = shadow_data[self.mapping['x']]
-                        shadow_y = shadow_data[self.mapping['y']]
+                    if self.aes['shadow'] is True:
+                        shadow_data = self.data.loc[lambda df: df[self.aes['by']] != subcat]
+                        shadow_x = shadow_data[self.aes['x']]
+                        shadow_y = shadow_data[self.aes['y']]
 
                         ax.scatter(shadow_x, shadow_y.replace(lookup), **shadow_kwargs)
 
@@ -272,8 +274,8 @@ class Plot:
 
         return self.apply_style()
 
-    def layer_histogram(self, **kwargs):
-        categories = sorted(self.data[self.mapping['by']].unique())
+    def histogram(self, **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
 
         kwargs, shadow_kwargs = split_kwargs(kwargs, 'shadow_')
 
@@ -295,15 +297,15 @@ class Plot:
             if i < len(categories):
 
                 subcat = categories[i]
-                plot_data = self.data.loc[lambda df: df[self.mapping['by']] == subcat]
+                plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
 
-                xdata = plot_data[self.mapping['x']]
+                xdata = plot_data[self.aes['x']]
 
                 ax.hist(xdata, **kwargs)
 
-                if self.mapping['shadow'] is True:
-                    shadow_data = self.data.loc[lambda df: df[self.mapping['by']] != subcat]
-                    shadow_x = shadow_data[self.mapping['x']]
+                if self.aes['shadow'] is True:
+                    shadow_data = self.data.loc[lambda df: df[self.aes['by']] != subcat]
+                    shadow_x = shadow_data[self.aes['x']]
 
                     ax.hist(shadow_x, **shadow_kwargs)
 
@@ -312,17 +314,17 @@ class Plot:
 
         return self.apply_style()
 
-    def layer_density(self, **kwargs):
-        categories = sorted(self.data[self.mapping['by']].unique())
+    def density(self, **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
 
         kwargs = britishdict(kwargs)
 
         for i, ax in enumerate(self.axes):
             if i < len(categories):
                 subcat = categories[i]
-                plot_data = self.data.loc[lambda df: df[self.mapping['by']] == subcat]
+                plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
 
-                xdensity = gaussian_kde(plot_data[self.mapping['x']])
+                xdensity = gaussian_kde(plot_data[self.aes['x']])
 
                 xrange = self.data_range('x')
                 xdata = np.linspace(xrange[0], xrange[1], 1000)
@@ -332,8 +334,8 @@ class Plot:
 
         return self.apply_style()
 
-    def layer_lines(self, **kwargs):
-        categories = sorted(self.data[self.mapping['by']].unique())
+    def lines(self, **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
 
         if 'colour' in kwargs.keys():
             kwargs['color'] = kwargs['colour']
@@ -343,10 +345,10 @@ class Plot:
             if i < len(categories):
 
                 subcat = categories[i]
-                plot_data = self.data.loc[lambda df: df[self.mapping['by']] == subcat]
+                plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
 
-                xdata = plot_data[self.mapping['x']]
-                ydata = plot_data[self.mapping['y']]
+                xdata = plot_data[self.aes['x']]
+                ydata = plot_data[self.aes['y']]
 
                 # could create a kwargs dict dynamically or through a loop or something
                 ax.plot(xdata, ydata, **kwargs)
@@ -356,8 +358,8 @@ class Plot:
 
         return self.apply_style()
 
-    def layer_segments(self, **kwargs):
-        categories = sorted(self.data[self.mapping['by']].unique())
+    def segments(self, **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
 
         if 'colour' in kwargs.keys():
             kwargs['color'] = kwargs['colour']
@@ -367,12 +369,12 @@ class Plot:
             if i < len(categories):
 
                 subcat = categories[i]
-                plot_data = self.data.loc[lambda df: df[self.mapping['by']] == subcat].reset_index(drop=True)
+                plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat].reset_index(drop=True)
 
-                xdata = plot_data[self.mapping['x']]
-                ydata = plot_data[self.mapping['y']]
-                x2data = plot_data[self.mapping['x2']]
-                y2data = plot_data[self.mapping['y2']]
+                xdata = plot_data[self.aes['x']]
+                ydata = plot_data[self.aes['y']]
+                x2data = plot_data[self.aes['x2']]
+                y2data = plot_data[self.aes['y2']]
 
                 for xi in range(len(xdata)):
                     x = (xdata[xi], x2data[xi])
@@ -385,9 +387,9 @@ class Plot:
 
         return self.apply_style()
 
-    def layer_text(self, categorical=None, lookup=None, check_overlap=False, **kwargs):
+    def label(self, categorical=None, lookup=None, check_overlap=False, **kwargs):
         # rename to `text`
-        categories = sorted(self.data[self.mapping['by']].unique())
+        categories = sorted(self.data[self.aes['by']].unique())
 
         kwargs = britishdict(kwargs)
         kwargs, adjust_kwargs = split_kwargs(kwargs, 'adj_')
@@ -396,17 +398,17 @@ class Plot:
             if i < len(categories):
 
                 subcat = categories[i]
-                plot_data = self.data.loc[lambda df: df[self.mapping['by']] == subcat].reset_index()
+                plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat].reset_index()
 
-                xdata = plot_data[self.mapping['x']]
-                ydata = plot_data[self.mapping['y']]
-                txt_data = plot_data[self.mapping['label']]
+                xdata = plot_data[self.aes['x']]
+                ydata = plot_data[self.aes['y']]
+                txt_data = plot_data[self.aes['label']]
 
                 if categorical is 'x':
-                    lookup = categorical_lookup(plot_data[self.mapping['x']]) if lookup is None else lookup
+                    lookup = categorical_lookup(plot_data[self.aes['x']]) if lookup is None else lookup
                     xdata = xdata.replace(lookup)
                 if categorical is 'y':
-                    lookup = categorical_lookup(plot_data[self.mapping['y']]) if lookup is None else lookup
+                    lookup = categorical_lookup(plot_data[self.aes['y']]) if lookup is None else lookup
                     ydata = ydata.replace(lookup)
 
                 texts = []
@@ -422,8 +424,8 @@ class Plot:
 
         return self.apply_style()
 
-    def layer_errorbars(self, categorical=None, **kwargs):
-        categories = sorted(self.data[self.mapping['by']].unique())
+    def error_bars(self, categorical=None, **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
 
         kwargs = britishdict(kwargs)
 
@@ -431,19 +433,19 @@ class Plot:
             if i < len(categories):
 
                 subcat = categories[i]
-                plot_data = self.data.loc[lambda df: df[self.mapping['by']] == subcat]
+                plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
 
-                xdata = plot_data[self.mapping['x']]
-                ydata = plot_data[self.mapping['y']]
-                xerror = plot_data[self.mapping['x_error']] if ('x_error' in self.mapping.keys()) else None
-                yerror = plot_data[self.mapping['y_error']] if ('y_error' in self.mapping.keys()) else None
+                xdata = plot_data[self.aes['x']]
+                ydata = plot_data[self.aes['y']]
+                xerror = plot_data[self.aes['x_error']] if ('x_error' in self.aes.keys()) else None
+                yerror = plot_data[self.aes['y_error']] if ('y_error' in self.aes.keys()) else None
 
                 if categorical is 'x':
-                    lookup = categorical_lookup(plot_data[self.mapping['x']])
+                    lookup = categorical_lookup(plot_data[self.aes['x']])
                     ax.errorbar(xdata.replace(lookup), ydata, xerr=xerror, yerr=yerror, **kwargs)
 
                 elif categorical is 'y':
-                    lookup = categorical_lookup(plot_data[self.mapping['y']])
+                    lookup = categorical_lookup(plot_data[self.aes['y']])
                     ax.errorbar(xdata, ydata.replace(lookup), xerr=xerror, yerr=yerror, **kwargs)
 
                 else:  # if both variables are continuous
@@ -459,8 +461,8 @@ class Plot:
 
         return self.apply_style()
 
-    def layer_calcline(self, func, **kwargs):
-        categories = sorted(self.data[self.mapping['by']].unique())
+    def calc_line(self, func, **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
         kwargs = britishdict(kwargs)
 
         for i, ax in enumerate(self.axes):
@@ -475,8 +477,8 @@ class Plot:
 
         return self
 
-    def layer_refline(self, slope=None, intercept=None, invert=False, **kwargs):
-        categories = sorted(self.data[self.mapping['by']].unique())
+    def ref_line(self, slope=None, intercept=None, invert=False, **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
         kwargs = britishdict(kwargs)
 
         for i, ax in enumerate(self.axes):
@@ -492,17 +494,17 @@ class Plot:
 
         return self
 
-    def layer_vline(self, intercept=0, y_range=None, annotation='', **kwargs):
-        categories = sorted(self.data[self.mapping['by']].unique())
+    def vline(self, intercept=0, y_range=None, annotation='', **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
         kwargs = britishdict(kwargs)
 
         for i, ax in enumerate(self.axes):
             if i < len(categories):
                 subcat = categories[i]
-                plot_data = self.data.loc[lambda df: df[self.mapping['by']] == subcat]
+                plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
 
                 if callable(intercept):
-                    xintercept = intercept(plot_data[self.mapping['x']])
+                    xintercept = intercept(plot_data[self.aes['x']])
                 else:
                     xintercept = intercept
 
@@ -516,17 +518,17 @@ class Plot:
 
         return self
 
-    def layer_hline(self, intercept=0, x_range=None, annotation='', **kwargs):
-        categories = sorted(self.data[self.mapping['by']].unique())
+    def hline(self, intercept=0, x_range=None, annotation='', **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
         kwargs = britishdict(kwargs)
 
         for i, ax in enumerate(self.axes):
             if i < len(categories):
                 subcat = categories[i]
-                plot_data = self.data.loc[lambda df: df[self.mapping['by']] == subcat]
+                plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
 
                 if callable(intercept):
-                    yintercept = intercept(plot_data[self.mapping['y']])
+                    yintercept = intercept(plot_data[self.aes['y']])
                 else:
                     yintercept = intercept
 
@@ -541,17 +543,17 @@ class Plot:
 
         return self
 
-    def layer_trendline(self, **kwargs):
-        # is this redundant with fit_line?
-        categories = sorted(self.data[self.mapping['by']].unique())
+    def trendline(self, **kwargs):
+        # edit to allow any polynomial
+        categories = sorted(self.data[self.aes['by']].unique())
         kwargs = britishdict(kwargs)
 
         for i, ax in enumerate(self.axes):
             subcat = categories[i]
-            plot_data = self.data.loc[lambda df: df[self.mapping['by']] == subcat]
+            plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
 
-            xdata = plot_data[self.mapping['x']]
-            ydata = plot_data[self.mapping['y']]
+            xdata = plot_data[self.aes['x']]
+            ydata = plot_data[self.aes['y']]
             m, c = np.polyfit(xdata, ydata, 1)
 
             xline = ax.get_xlim()
@@ -562,21 +564,18 @@ class Plot:
 
         return self
 
-    def layer_fitline(self, objective_function, print_params=False, **kwargs):
-        categories = sorted(self.data[self.mapping['by']].unique())
+    def fit_line(self, objective_function, **kwargs):
+        categories = sorted(self.data[self.aes['by']].unique())
         kwargs = britishdict(kwargs)
 
         for i, ax in enumerate(self.axes):
             subcat = categories[i]
-            plot_data = self.data.loc[lambda df: df[self.mapping['by']] == subcat]
+            plot_data = self.data.loc[lambda df: df[self.aes['by']] == subcat]
 
-            xdata = plot_data[self.mapping['x']]
-            ydata = plot_data[self.mapping['y']]
+            xdata = plot_data[self.aes['x']]
+            ydata = plot_data[self.aes['y']]
 
             params, _ = op.curve_fit(objective_function, xdata, ydata)
-
-            if print_params:
-                print(subcat + ':', params)
 
             xlims = ax.get_xlim()
             ylims = ax.get_ylim()
@@ -595,17 +594,17 @@ class Plot:
 
     def data_range(self, dimension):
         # could put this elsewhere in a different utils file?
-        return min(self.data[self.mapping[dimension]]), max(self.data[self.mapping[dimension]])
+        return min(self.data[self.aes[dimension]]), max(self.data[self.aes[dimension]])
 
     def check_mapping(self, mapname):
         try:
-            self.mapping[mapname]
+            self.aes[mapname]
         except KeyError:
             print('No mapping for required argument \'' + mapname + '\' specified.')
 
     # Styling
 
-    def layer_legend(self, legend_plots=(0,), *args, **kwargs):
+    def legend(self, legend_plots=(0,), *args, **kwargs):
         for i in legend_plots:
             ax = self.axes[i]
             ax.legend(*args, **kwargs)
@@ -615,34 +614,42 @@ class Plot:
         self.fig.tight_layout(*args, **kwargs)
         return self
 
-    def set_xlim(self, lims, **kwargs):
-        # `set_xlim(...)` ?
+    def xlim(self, lims, **kwargs):
         for ax in self.axes:
             ax.set_xlim(lims, **kwargs)
         return self
 
-    def set_ylim(self, lims, **kwargs):
+    def ylim(self, lims, **kwargs):
         for ax in self.axes:
             ax.set_ylim(lims, **kwargs)
         return self
 
-    def set_xlab(self, lab):
+    def xlab(self, lab, **kwargs):
+        for k, v in self.style['axes']['text'].items():
+            if k not in kwargs.keys():
+                kwargs[k] = v
+
         self.labels['xlab'] = lab
+
         return self.apply_style()
 
-    def set_ylab(self, lab):
+    def ylab(self, lab, **kwargs):
+        for k, v in self.style['axes']['text'].items():
+            if k not in kwargs.keys():
+                kwargs[k] = v
+
         self.labels['ylab'] = lab
+
         return self.apply_style()
 
-    def set_subtitle(self, subtitle=None, **kwargs):
-        # should it be plural (`set_subtitles(...)`)?
+    def subtitle(self, subtitle=None, **kwargs):
         for k, v in self.style['subtitle'].items():
             if k not in kwargs.keys():
                 kwargs[k] = v
 
         if subtitle is None:
             if len(self.axes) > 1:
-                subtitle = sorted(self.data[self.mapping['by']].unique())
+                subtitle = sorted(self.data[self.aes['by']].unique())
             else:
                 subtitle = ''
 
@@ -655,7 +662,7 @@ class Plot:
 
         return self
 
-    def set_title(self, title=None, **kwargs):
+    def title(self, title=None, **kwargs):
 
         for k, v in self.style['title'].items():
             if k not in kwargs.keys():
