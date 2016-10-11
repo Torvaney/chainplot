@@ -70,7 +70,7 @@ class Plot:
             self.labels = labels.copy()
 
         if style is None:
-            self.style = plot_style.DEFAULT_STYLE.copy()
+            self.style = plot_style.THEME_SNOW.copy()
         else:
             self.style = style.copy()
 

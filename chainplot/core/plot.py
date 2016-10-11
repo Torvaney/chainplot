@@ -21,7 +21,10 @@ from chainplot.utils.string_tools import prettify
 # Add default styling for layers to style.py
 # Add ordering for facets/categorical variables
 # Move non-plotting functions to another directory
-
+# Could have style class rather than just all in a dict?
+# Add callables in mapping (e.g. lambda functions). Could go well with separate mapping class idea
+# Callables for labels and subtitles
+# Add requirements.txt
 
 # Define some helper functions (should probably go into class as static methods tbh)
 def categorical_lookup(series):
@@ -45,7 +48,7 @@ def facet_dimensions(number_of_plots):
 
 
 class Plot:
-    def __init__(self, data, mapping=None, labels=None, style=plot_style.DEFAULT_STYLE, **kwargs):
+    def __init__(self, data, mapping=None, labels=None, style=plot_style.themes['default'], **kwargs):
         self.data = data.copy()
         self.mapping = mapping
         self.fig = plt.figure(**kwargs)
@@ -75,7 +78,7 @@ class Plot:
             style = plot_style.themes[style.lower()]
 
         self.style = combine_dict(
-            plot_style.DEFAULT_STYLE,
+            plot_style.THEME_SNOW,
             style.copy()
         )
 

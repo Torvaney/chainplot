@@ -1,6 +1,6 @@
 
 
-DEFAULT_STYLE = {
+THEME_SNOW = {
     'title': {
         'ha': 'left',
         'x': 0.125,
@@ -154,7 +154,7 @@ GGPLOT = {
     },
     'legend': {
         'loc': 'upper left',
-        'frameon': False
+        'frameon': True
     },
     'scales': {
         'cmap': 'viridis'
@@ -193,7 +193,8 @@ GGPLOT = {
 }
 
 themes = {
-    'default': DEFAULT_STYLE,
+    'default': GGPLOT,
     'theme_bw': THEME_BW,
+    'theme_snow': THEME_SNOW,
     'ggplot': GGPLOT
 }
