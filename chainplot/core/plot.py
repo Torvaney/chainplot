@@ -81,6 +81,9 @@ class Plot:
 
         self.fig.set_facecolor(self.style['fig']['background']['color'])
 
+        # store model fitting parameters
+        self.fitted_params = []
+
     def alter_data(self, data):
         self.data = data
         return self
@@ -571,8 +574,7 @@ class Plot:
 
         return self
 
-    def layer_fitline(self, objective_function=lambda x, a, b: a * x + b,
-                      print_params=False, **kwargs):
+    def layer_trendline(self, objective_function=lambda x, a, b: a * x + b, **kwargs):
 
         categories = sorted(self.data[self.mapping['by']].unique())
         kwargs = britishdict(kwargs)
@@ -590,8 +592,7 @@ class Plot:
 
             params, _ = op.curve_fit(objective_function, xdata, ydata)
 
-            if print_params:
-                print(subcat + ':', params)
+            self.fitted_params.append(params)
 
             xlims = ax.get_xlim()
             ylims = ax.get_ylim()
