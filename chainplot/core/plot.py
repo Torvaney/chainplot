@@ -571,32 +571,9 @@ class Plot:
 
         return self
 
-    def layer_trendline(self, **kwargs):
-        # is this redundant with fit_line?
-        categories = sorted(self.data[self.mapping['by']].unique())
-        kwargs = britishdict(kwargs)
-        kwargs = combine_dict(
-            self.style['layers']['trendline'],
-            kwargs
-        )
+    def layer_fitline(self, objective_function=lambda x, a, b: a * x + b,
+                      print_params=False, **kwargs):
 
-        for i, ax in enumerate(self.axes):
-            subcat = categories[i]
-            plot_data = self.data.loc[lambda df: df[self.mapping['by']] == subcat]
-
-            xdata = plot_data[self.mapping['x']]
-            ydata = plot_data[self.mapping['y']]
-            m, c = np.polyfit(xdata, ydata, 1)
-
-            xline = ax.get_xlim()
-            yline = [m * x + c for x in xline]
-
-            ax.plot(xline, yline, **kwargs)
-            ax.set_xlim(xline)
-
-        return self
-
-    def layer_fitline(self, objective_function, print_params=False, **kwargs):
         categories = sorted(self.data[self.mapping['by']].unique())
         kwargs = britishdict(kwargs)
         kwargs = combine_dict(
