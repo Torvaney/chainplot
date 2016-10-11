@@ -621,8 +621,12 @@ class Plot:
 
     # Styling
 
-    def layer_legend(self, legend_plots=(0,), *args, **kwargs):
-        for i in legend_plots:
+    def add_legend(self, legend_axes=(0,), *args, **kwargs):
+        kwargs = combine_dict(
+            self.style['legend'],
+            kwargs
+        )
+        for i in legend_axes:
             ax = self.axes[i]
             ax.legend(*args, **kwargs)
         return self
