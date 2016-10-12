@@ -245,19 +245,19 @@ class Plot:
         data = plot_data.copy()
         if attr in self.mapping.keys():
             mapped_attr = self.mapping[attr]
+
+            if type(mapped_attr) == str:
+                attr_data = data[mapped_attr]
+
+            elif callable(mapped_attr):
+                print('callable')
+                attr_data = mapped_attr(data)
+
+            else:
+                ValueError('Must map variables with either string references or functions')
         else:
             # could use `self.check_mapping` here?
             attr_data = None
-
-        if type(mapped_attr) == str:
-            attr_data = data[mapped_attr]
-
-        elif callable(mapped_attr):
-            print('callable')
-            attr_data = mapped_attr(data)
-
-        else:
-            ValueError('Must map variables with either string references or functions')
 
         return attr_data
 
