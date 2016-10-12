@@ -26,6 +26,9 @@ from chainplot.utils.string_tools import prettify
 # Callables for labels and subtitles
 # Add requirements.txt
 # Add facet grid (maybe change method of faceting? idk)
+# Should categorical lookups be set somewhere as attributes? e.g. `self.lookups = {'y': None}`
+# Get categorical variables automatically
+# rename vline and hline `yline` and `xline`?
 
 # Define some helper functions (should probably go into class as static methods tbh)
 def categorical_lookup(series):
@@ -258,6 +261,7 @@ class Plot:
         for i, ax in enumerate(self.axes):
             if i < len(categories):
 
+                # could use `self.subset_data` method here, instead
                 subcat = categories[i]
                 plot_data = self.plot_data.loc[lambda df: df[self.mapping['by']] == subcat]
 
@@ -366,9 +370,7 @@ class Plot:
     def layer_lines(self, **kwargs):
         categories = sorted(self.plot_data[self.mapping['by']].unique())
 
-        if 'colour' in kwargs.keys():
-            kwargs['color'] = kwargs['colour']
-            kwargs.pop('colour', 0)
+        kwargs = britishdict(kwargs)
 
         for i, ax in enumerate(self.axes):
             if i < len(categories):
@@ -390,9 +392,7 @@ class Plot:
     def layer_segments(self, **kwargs):
         categories = sorted(self.plot_data[self.mapping['by']].unique())
 
-        if 'colour' in kwargs.keys():
-            kwargs['color'] = kwargs['colour']
-            kwargs.pop('colour', 0)
+        kwargs = britishdict(kwargs)
 
         for i, ax in enumerate(self.axes):
             if i < len(categories):
