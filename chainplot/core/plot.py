@@ -250,7 +250,6 @@ class Plot:
                 attr_data = data[mapped_attr]
 
             elif callable(mapped_attr):
-                print('callable')
                 attr_data = mapped_attr(data)
 
             else:
