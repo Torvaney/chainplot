@@ -29,6 +29,7 @@ from chainplot.utils.string_tools import prettify
 # Should categorical lookups be set somewhere as attributes? e.g. `self.lookups = {'y': None}`
 # Get categorical variables automatically
 # rename vline and hline `yline` and `xline`?
+# Set facets in a separate method?
 
 # Define some helper functions (should probably go into class as static methods tbh)
 def categorical_lookup(series):
@@ -240,6 +241,28 @@ class Plot:
 
         return self.apply_style()
 
+    def pull_data(self, attr, plot_data):
+        data = plot_data.copy()
+        if attr in self.mapping.keys():
+            mapped_attr = self.mapping[attr]
+        else:
+            # could use `self.check_mapping` here?
+            attr_data = None
+
+        if type(mapped_attr) == str:
+            attr_data = data[mapped_attr]
+
+        elif callable(mapped_attr):
+            print('callable')
+            attr_data = mapped_attr(data)
+
+        else:
+            ValueError('Must map variables with either string references or functions')
+
+        return attr_data
+
+    # Layering methods
+
     def layer_points(self, categorical=None, lookup=None, **kwargs):
         categories = sorted(self.plot_data[self.mapping['by']].unique())
 
@@ -265,8 +288,8 @@ class Plot:
                 subcat = categories[i]
                 plot_data = self.plot_data.loc[lambda df: df[self.mapping['by']] == subcat]
 
-                xdata = plot_data[self.mapping['x']]
-                ydata = plot_data[self.mapping['y']]
+                xdata = self.pull_data('x', plot_data)
+                ydata = self.pull_data('y', plot_data)
 
                 if categorical is 'x':
                     lookup = categorical_lookup(plot_data[self.mapping['x']]) if lookup is None else lookup
@@ -322,8 +345,8 @@ class Plot:
 
         for kw in [kwargs, shadow_kwargs]:
             if 'binwidth' in kw.keys():
-                xrange = self.data_range(dimension='x')
-                kw['bins'] = np.arange(xrange[0], xrange[1], kw['binwidth'])
+                x_range = self.data_range(dimension='x')
+                kw['bins'] = np.arange(x_range[0], x_range[1], kw['binwidth'])
                 kw.pop('binwidth', 0)
 
         for i, ax in enumerate(self.axes):
@@ -332,7 +355,7 @@ class Plot:
                 subcat = categories[i]
                 plot_data = self.plot_data.loc[lambda df: df[self.mapping['by']] == subcat]
 
-                xdata = plot_data[self.mapping['x']]
+                xdata = self.pull_data('x', plot_data)
 
                 ax.hist(xdata, **kwargs)
 
@@ -357,10 +380,10 @@ class Plot:
                 subcat = categories[i]
                 plot_data = self.plot_data.loc[lambda df: df[self.mapping['by']] == subcat]
 
-                xdensity = gaussian_kde(plot_data[self.mapping['x']])
+                xdensity = gaussian_kde(self.pull_data('x', plot_data))
 
-                xrange = self.data_range('x')
-                xdata = np.linspace(xrange[0], xrange[1], 1000)
+                x_range = self.data_range('x')
+                xdata = np.linspace(x_range[0], x_range[1], 1000)
                 ydata = xdensity.pdf(xdata)
 
                 ax.plot(xdata, ydata, **kwargs)
@@ -378,8 +401,8 @@ class Plot:
                 subcat = categories[i]
                 plot_data = self.plot_data.loc[lambda df: df[self.mapping['by']] == subcat]
 
-                xdata = plot_data[self.mapping['x']]
-                ydata = plot_data[self.mapping['y']]
+                xdata = self.pull_data('x', plot_data)
+                ydata = self.pull_data('y', plot_data)
 
                 # could create a kwargs dict dynamically or through a loop or something
                 ax.plot(xdata, ydata, **kwargs)
@@ -400,10 +423,10 @@ class Plot:
                 subcat = categories[i]
                 plot_data = self.plot_data.loc[lambda df: df[self.mapping['by']] == subcat].reset_index(drop=True)
 
-                xdata = plot_data[self.mapping['x']]
-                ydata = plot_data[self.mapping['y']]
-                x2data = plot_data[self.mapping['x2']]
-                y2data = plot_data[self.mapping['y2']]
+                xdata = self.pull_data('x', plot_data)
+                ydata = self.pull_data('y', plot_data)
+                x2data = self.pull_data('x2', plot_data)
+                y2data = self.pull_data('y2', plot_data)
 
                 for xi in range(len(xdata)):
                     x = (xdata[xi], x2data[xi])
@@ -464,10 +487,10 @@ class Plot:
                 subcat = categories[i]
                 plot_data = self.plot_data.loc[lambda df: df[self.mapping['by']] == subcat]
 
-                xdata = plot_data[self.mapping['x']]
-                ydata = plot_data[self.mapping['y']]
-                xerror = plot_data[self.mapping['x_error']] if ('x_error' in self.mapping.keys()) else None
-                yerror = plot_data[self.mapping['y_error']] if ('y_error' in self.mapping.keys()) else None
+                xdata = self.pull_data('x', plot_data)
+                ydata = self.pull_data('y', plot_data)
+                xerror = self.pull_data('x_error', plot_data)
+                yerror = self.pull_data('y_error', plot_data)
 
                 if categorical is 'x':
                     lookup = categorical_lookup(plot_data[self.mapping['x']])
@@ -597,8 +620,8 @@ class Plot:
             subcat = categories[i]
             plot_data = self.plot_data.loc[lambda df: df[self.mapping['by']] == subcat]
 
-            xdata = plot_data[self.mapping['x']]
-            ydata = plot_data[self.mapping['y']]
+            xdata = self.pull_data('x', plot_data)
+            ydata = self.pull_data('y', plot_data)
 
             params, _ = op.curve_fit(objective_function, xdata, ydata)
 
