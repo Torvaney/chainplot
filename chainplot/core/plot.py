@@ -92,7 +92,7 @@ class Plot:
         self.fig.set_facecolor(self.style['fig']['background']['color'])
 
         # store model fitting parameters
-        self.fitted_params = []
+        self.fitted_parameters = []
 
     def subset_data(self, subset_function):
         self.plot_data = self.data.loc[subset_function]
@@ -624,7 +624,7 @@ class Plot:
 
             params, _ = op.curve_fit(objective_function, xdata, ydata)
 
-            self.fitted_params.append(params)
+            self.fitted_parameters.append(params)
 
             xlims = ax.get_xlim()
             ylims = ax.get_ylim()
