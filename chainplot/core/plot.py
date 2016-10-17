@@ -29,7 +29,9 @@ from chainplot.utils.string_tools import prettify
 # Should categorical lookups be set somewhere as attributes? e.g. `self.lookups = {'y': None}`
 # Get categorical variables automatically
 # rename vline and hline `yline` and `xline`?
-# Set facets in a separate method?
+# Set facets in a separate method? - I can definitely take the axis creation parts out of `map` and put them in ...
+#  ... elsewhere and then call method if layer is done and no axes are inintialised.
+# need to sort all styling (blech)
 
 # Define some helper functions (should probably go into class as static methods tbh)
 def categorical_lookup(series):
@@ -167,6 +169,7 @@ class Plot:
                 ax.spines["bottom"].set_visible(False)
 
                 ax.get_yaxis().tick_left()
+                # could put this in style dict
                 ax.tick_params(
                     axis='x',  # changes apply to the x-axis (could do outside of loop?)
                     which='both',  # both major and minor ticks are affected
@@ -174,6 +177,7 @@ class Plot:
                     top='off'  # ticks along the top edge are off
                 )
 
+                # could put this in style dict
                 ax.xaxis.grid(True, which='major', color='dimgray', linestyle='dotted')
                 ax.set_xlim(
                     [min(list(lookup.values())) - 1,

@@ -24,6 +24,13 @@ THEME_SNOW = {
             'color': 'snow'
         }
     },
+    'categorical': {
+        'grid': {
+            'which': 'major',
+            'color': 'dimgray',
+            'linestyle': 'dotted'
+        }
+    },
     'legend': {
         'loc': 'upper left',
         'frameon': False
@@ -86,6 +93,13 @@ THEME_BW = {
         },
         'background': {
             'color': 'white'
+        }
+    },
+    'categorical': {
+        'grid': {
+            'which': 'major',
+            'color': 'dimgray',
+            'linestyle': 'dotted'
         }
     },
     'legend': {
