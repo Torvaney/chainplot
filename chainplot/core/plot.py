@@ -492,6 +492,33 @@ class Plot:
 
         return self.apply_style()
 
+    def layer_ribbons(self, categorical=None, **kwargs):
+        categories = sorted(self.plot_data[self.mapping['by']].unique())
+
+        kwargs = britishdict(kwargs)
+
+        for i, ax in enumerate(self.axes):
+            if i < len(categories):
+
+                subcat = categories[i]
+                plot_data = self.plot_data.loc[lambda df: df[self.mapping['by']] == subcat]
+
+                xdata = self.pull_data('x', plot_data)
+                y_lo_data = self.pull_data('y_lower', plot_data)  # could change these labels to be same as errorbars
+                y_up_data = self.pull_data('y_upper', plot_data)  # ... or change error bars (probably preferable)
+
+                lookup = None
+                categorical = None
+                ax.fill_between(xdata, y1=y_lo_data, y2=y_up_data, **kwargs)
+
+            else:
+                ax.axis('off')
+
+        if categorical in ('x', 'y'):
+            self.discrete_axis(categorical, lookup)
+
+        return self.apply_style()
+
     def layer_calcline(self, func, **kwargs):
         categories = sorted(self.plot_data[self.mapping['by']].unique())
         kwargs = britishdict(kwargs)
