@@ -21,3 +21,4 @@
 * Set facets in a separate method - I can definitely take the axis creation parts out of `map` and put them in ...
   ... elsewhere and then call method if layer is none and no axes are inintialised.
 * need to sort all styling (blech)
+* do something about shadowing variables (shouldn't go in mapping; maybe as a `layer_*` argument instead?) 

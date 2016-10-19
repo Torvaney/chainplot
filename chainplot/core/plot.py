@@ -365,7 +365,7 @@ class Plot:
                 xdata = np.linspace(x_range[0], x_range[1], 1000)
                 ydata = xdensity.pdf(xdata)
 
-                ax.plot(xdata, ydata, **kwargs)
+                ax.fill(xdata, ydata, **kwargs)
 
         return self.apply_style()
 
