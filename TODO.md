@@ -1,10 +1,7 @@
 # NOTES
-* Need to think about how flexible vs just personal use/convenience?
-  For some level of flexibility it'll make more sense just to start from scratch w/ graphics of grammar
-* How much am I just going to rip off ggplot? And how much to adapt to a more 'pythonic' approach?
-* How do I set default styles/subtitles etc in a natural manner?
-* new `layer_*` names actually kind of make it harder to read?
-* Given the similarities, can I abstract the layering somehow? (maybe a layer class or something?)
+* Given the similarities, can I abstract the layering somehow?
+    * `proto_layer('points', ...)`, perhaps?
+    * (maybe a layer class or something?)
 
 # Stuff to add:
 * Add default styling for layers to style.py
@@ -30,3 +27,4 @@
 * Is the original faceting method (dummy var) closer to the true method?
     * Any single plot is just a plot in which data faceted the same
 * could do `PlotMapping` class that `Plot` inherits from?
+* add `scales` attribute(/class?) to help handle categorical variables
