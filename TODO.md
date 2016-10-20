@@ -28,3 +28,6 @@
     * Any single plot is just a plot in which data faceted the same
 * could do `PlotMapping` class that `Plot` inherits from?
 * add `scales` attribute(/class?) to help handle categorical variables
+* Add scales mapping (colour, size)
+* Add some decent documentation
+* rename some methods
