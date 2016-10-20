@@ -233,7 +233,7 @@ class Plot:
                 attr_data = mapped_attr(data)
 
             else:
-                ValueError('Must map variables with either string references or functions')
+                ValueError('Variables must be mapped to data with either string references or functions')
         else:
             # could use `self.check_mapping` here?
             attr_data = None
@@ -243,7 +243,7 @@ class Plot:
     # Layering methods
 
     def layer_points(self, categorical=None, lookup=None, **kwargs):
-        categories = sorted(self.plot_data[self.mapping['by']].unique())
+        categories = self.get_facet_variables()
 
         # argument handling (should really be moved to a method or class or something)
         kwargs, shadow_kwargs = split_kwargs(kwargs, 'shadow_')
@@ -263,9 +263,9 @@ class Plot:
         for i, ax in enumerate(self.axes):
             if i < len(categories):
 
-                # could use `self.subset_data` method here, instead
+                # could use `self.subset_data` method here instead, perhaps
                 subcat = categories[i]
-                plot_data = self.plot_data.loc[lambda df: df[self.mapping['by']] == subcat]
+                plot_data = self.get_facet_data(subcat)
 
                 xdata = self.pull_data('x', plot_data)
                 ydata = self.pull_data('y', plot_data)
@@ -657,6 +657,21 @@ class Plot:
             self.mapping[mapname]
         except KeyError:
             print('No mapping for required argument \'' + mapname + '\' specified.')
+
+    def get_facet_variables(self):
+        facet_column = self.mapping['by']
+        if facet_column is None:
+            return None
+        else:
+            # should check for errors here
+            return sorted(self.plot_data[facet_column].unique())
+
+    def get_facet_data(self, subcategory):
+        facet_column = self.mapping['by']
+        if facet_column is None:
+            return self.plot_data
+        else:
+            return self.plot_data.loc[lambda df: df[facet_column] == subcategory]
 
     # Styling
 
