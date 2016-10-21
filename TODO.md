@@ -31,3 +31,4 @@
 * Add scales mapping (colour, size)
 * Add some decent documentation
 * rename some methods
+* refactor style dicts so each only specifies changes

@@ -61,6 +61,9 @@ THEME_SNOW = {
             'alpha': 1,
             'bins': 50
         },
+        'line': {
+            'color': 'black'
+        },
         'refline': {
             'color': 'black',
             'ls': 'dotted'
@@ -81,7 +84,7 @@ THEME_BW = {
     'subtitle': {
         'loc': 'left',
         'fontsize': 16,
-        'color': 'black'
+        'color': 'dimgray'
     },
     'axes': {
         'text': {
@@ -132,6 +135,9 @@ THEME_BW = {
             'alpha': 1,
             'bins': 50
         },
+        'line': {
+            'color': 'black'
+        },
         'refline': {
             'color': 'black',
             'ls': 'dotted'
@@ -152,7 +158,7 @@ GGPLOT = {
     'subtitle': {
         'loc': 'left',
         'fontsize': 16,
-        'color': 'black'
+        'color': 'dimgray'
     },
     'axes': {
         'text': {
@@ -195,6 +201,9 @@ GGPLOT = {
             'color': 'black',
             'alpha': 1,
             'bins': 50
+        },
+        'line': {
+            'color': 'black'
         },
         'refline': {
             'color': 'black',

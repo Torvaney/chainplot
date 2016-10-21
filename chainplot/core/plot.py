@@ -370,9 +370,13 @@ class Plot:
         return self.apply_style()
 
     def layer_lines(self, **kwargs):
-        categories = sorted(self.plot_data[self.mapping['by']].unique())
+        categories = self.get_facet_variables()
 
         kwargs = britishdict(kwargs)
+        kwargs = combine_dict(
+            self.style['layers']['line'],
+            kwargs
+        )
 
         for i, ax in enumerate(self.axes):
             if i < len(categories):
@@ -419,8 +423,7 @@ class Plot:
         return self.apply_style()
 
     def layer_text(self, categorical=None, lookup=None, check_overlap=False, **kwargs):
-        # rename to `text`
-        categories = sorted(self.plot_data[self.mapping['by']].unique())
+        categories = self.get_facet_variables()
 
         kwargs = britishdict(kwargs)
         kwargs, adjust_kwargs = split_kwargs(kwargs, 'adj_')
@@ -429,11 +432,11 @@ class Plot:
             if i < len(categories):
 
                 subcat = categories[i]
-                plot_data = self.plot_data.loc[lambda df: df[self.mapping['by']] == subcat].reset_index()
+                plot_data = self.get_facet_data(subcat).reset_index()
 
-                xdata = plot_data[self.mapping['x']]
-                ydata = plot_data[self.mapping['y']]
-                txt_data = plot_data[self.mapping['label']]
+                xdata = self.pull_data('x', plot_data)
+                ydata = self.pull_data('y', plot_data)
+                txt_data = self.pull_data('label', plot_data)
 
                 if categorical is 'x':
                     lookup = categorical_lookup(plot_data[self.mapping['x']]) if lookup is None else lookup
