@@ -335,6 +335,7 @@ class Plot:
                 plot_data = self.plot_data.loc[lambda df: df[self.mapping['by']] == subcat]
 
                 xdata = self.pull_data('x', plot_data)
+                xdata = [x for x in xdata if np.isfinite(x)]
 
                 ax.hist(xdata, **kwargs)
 
