@@ -93,7 +93,7 @@ class Plot:
         if self.axes is not None:
             if len(self.axes) > 1 and self.labels['subtitle'] is None:
                 # subtitle = sorted(self.plot_data[self.mapping['by']].unique())
-                subtitle = sorted([str(s) for s in self.pull_data('by', self.data).unique()])
+                subtitle = sorted([s for s in self.pull_data('by', self.data).unique()])
                 subtitle = [prettify(sub) for sub in subtitle]
             else:
                 subtitle = prettify(labels['subtitle'])
@@ -235,6 +235,8 @@ class Plot:
 
             else:
                 ValueError('Variables must be mapped to data with either string references or functions')
+        elif attr is None:
+            attr_data = data
         else:
             # could use `self.check_mapping` here?
             attr_data = None
