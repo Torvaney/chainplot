@@ -233,6 +233,9 @@ class Plot:
             elif callable(mapped_attr):
                 attr_data = mapped_attr(data)
 
+            elif type(mapped_attr) in (int, float):
+                attr_data = mapped_attr * np.ones(data.shape[0])
+
             else:
                 ValueError('Variables must be mapped to data with either string references or functions')
         elif attr is None:
