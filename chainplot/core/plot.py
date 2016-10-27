@@ -246,6 +246,12 @@ class Plot:
 
         return attr_data
 
+    def filter_plot_data(self, plot_data, mapkey, value):
+        if value is None:
+            return plot_data
+        else:
+            return plot_data.loc[plot_data[self.mapping[mapkey]] == value]
+
     # Layering methods
 
     def layer_points(self, categorical=None, lookup=None, **kwargs):
@@ -392,26 +398,18 @@ class Plot:
             if i < len(categories):
                 subcat = categories[i]
 
-                if groups is not None:
-                    for g in groups:
-                        plot_data = (
-                            self.plot_data
-                            .loc[lambda df: df[self.mapping['by']] == subcat]
-                            .loc[lambda df: df[self.mapping['group']] == g])
-
-                        xdata = self.pull_data('x', plot_data)
-                        ydata = self.pull_data('y', plot_data)
-
-                        kwargs = combine_dict({'label': g}, kwargs)  # add labels unless otherwise specified
-                        ax.plot(xdata, ydata, **kwargs)
-                else:
-                    plot_data = self.plot_data.loc[lambda df: df[self.mapping['by']] == subcat]
+                for g in groups:
+                    plot_data = (
+                        self.plot_data
+                        .pipe(self.filter_plot_data, mapkey='by', value=subcat)
+                        .pipe(self.filter_plot_data, mapkey='group', value=g)
+                    )
 
                     xdata = self.pull_data('x', plot_data)
                     ydata = self.pull_data('y', plot_data)
 
+                    kwargs = combine_dict({'label': g}, kwargs)  # add labels unless otherwise specified
                     ax.plot(xdata, ydata, **kwargs)
-
 
             else:
                 ax.axis('off')
