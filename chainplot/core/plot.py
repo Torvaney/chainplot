@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import scipy.optimize as op
 from adjustText import adjust_text
 from scipy.stats.kde import gaussian_kde
@@ -236,13 +237,14 @@ class Plot:
             elif type(mapped_attr) in (int, float):
                 attr_data = mapped_attr * np.ones(data.shape[0])
 
+            elif mapped_attr is None:
+                # redundant?
+                attr_data = pd.Series([None])
+
             else:
                 ValueError('Variables must be mapped to data with either string references or functions')
-        elif attr is None:
-            # redundant?
-            attr_data = None
         else:
-            attr_data = None
+            attr_data = pd.Series([None])
 
         return attr_data
 
@@ -391,8 +393,7 @@ class Plot:
             kwargs
         )
 
-        groups = self.pull_data('group', self.data)
-        groups = groups.unique() if groups is not None else None
+        groups = self.pull_data('group', self.data).unique()
 
         for i, ax in enumerate(self.axes):
             if i < len(categories):
