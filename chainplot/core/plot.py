@@ -239,9 +239,9 @@ class Plot:
             else:
                 ValueError('Variables must be mapped to data with either string references or functions')
         elif attr is None:
+            # redundant?
             attr_data = None
         else:
-            # should this return None or `data`?
             attr_data = None
 
         return attr_data
@@ -691,6 +691,7 @@ class Plot:
             return sorted(self.plot_data[facet_column].unique())
 
     def get_facet_data(self, subcategory):
+        # redundant with `filter_plot_data`
         facet_column = self.mapping['by']
         if facet_column is None:
             return self.plot_data
