@@ -385,23 +385,33 @@ class Plot:
             kwargs
         )
 
-        groups = self.pull_data('group', self.data).unique()
+        groups = self.pull_data('group', self.data)
+        groups = groups.unique() if groups is not None else None
 
         for i, ax in enumerate(self.axes):
             if i < len(categories):
+                subcat = categories[i]
 
-                for g in groups:
-                    subcat = categories[i]
-                    plot_data = (
-                        self.plot_data
-                        .loc[lambda df: df[self.mapping['by']] == subcat]
-                        .loc[lambda df: df[self.mapping['group']] == g])
+                if groups is not None:
+                    for g in groups:
+                        plot_data = (
+                            self.plot_data
+                            .loc[lambda df: df[self.mapping['by']] == subcat]
+                            .loc[lambda df: df[self.mapping['group']] == g])
+
+                        xdata = self.pull_data('x', plot_data)
+                        ydata = self.pull_data('y', plot_data)
+
+                        kwargs = combine_dict({'label': g}, kwargs)  # add labels unless otherwise specified
+                        ax.plot(xdata, ydata, **kwargs)
+                else:
+                    plot_data = self.plot_data.loc[lambda df: df[self.mapping['by']] == subcat]
 
                     xdata = self.pull_data('x', plot_data)
                     ydata = self.pull_data('y', plot_data)
 
-                    kwargs = combine_dict({'label': g}, kwargs)  # add labels unless otherwise specified
                     ax.plot(xdata, ydata, **kwargs)
+
 
             else:
                 ax.axis('off')
