@@ -71,7 +71,8 @@ THEME_SNOW = {
         'trendline': {
             'color': 'skyblue'
         }
-    }
+    },
+    'colourmap': 'Paired'
 }
 
 THEME_BW = {
@@ -145,7 +146,8 @@ THEME_BW = {
         'trendline': {
             'color': 'skyblue'
         }
-    }
+    },
+    'colourmap': 'Paired'
 }
 
 GGPLOT = {
@@ -212,7 +214,8 @@ GGPLOT = {
         'trendline': {
             'color': 'skyblue'
         }
-    }
+    },
+    'colourmap': 'Paired'
 }
 
 themes = {

@@ -1,3 +1,4 @@
+import matplotlib.cm
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -13,7 +14,7 @@ from chainplot.utils.string_tools import prettify
 # Define some helper functions (should probably go into class as static methods tbh or in separate module)
 def categorical_lookup(series):
     s = series.copy()
-    unique_vals = sorted(s.unique())
+    unique_vals = sorted(np.unique(s))
     return dict(zip(unique_vals, np.arange(1, len(unique_vals) + 1)))
 
 
@@ -393,13 +394,18 @@ class Plot:
             kwargs
         )
 
-        groups = self.pull_data('group', self.data).unique()
+        if 'colour' in self.mapping.keys():
+            groups = self.pull_data('colour', self.data).unique()
+        else:
+            groups = self.pull_data('group', self.data).unique()
+
+        colours = matplotlib.cm.get_cmap(self.style['colourmap'])
 
         for i, ax in enumerate(self.axes):
             if i < len(categories):
                 subcat = categories[i]
 
-                for g in groups:
+                for gi, g in enumerate(groups):
                     plot_data = (
                         self.plot_data
                         .pipe(self.filter_plot_data, mapkey='by', value=subcat)
@@ -409,7 +415,11 @@ class Plot:
                     xdata = self.pull_data('x', plot_data)
                     ydata = self.pull_data('y', plot_data)
 
-                    kwargs = combine_dict({'label': g}, kwargs)  # add labels unless otherwise specified
+                    if 'colour' in self.mapping.keys():
+                        colour_index = 1 * gi / len(groups)  # scale to colourmap scale
+                        kwargs = combine_dict(kwargs, {'color': colours(colour_index)})
+
+                    kwargs = combine_dict(kwargs, {'label': g})  # add labels with overwriting (this could be an issue)
                     ax.plot(xdata, ydata, **kwargs)
 
             else:
