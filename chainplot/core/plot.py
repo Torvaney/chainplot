@@ -390,10 +390,8 @@ class Plot:
             kwargs
         )
 
-        if 'colour' in self.mapping.keys():
-            groups = np.unique(self.pull_data('colour', self.data))
-        else:
-            groups = np.unique(self.pull_data('group', self.data))
+        group_key = 'colour' if 'colour' in self.mapping.keys() else 'group'
+        groups = np.unique(self.pull_data(group_key, self.data))
 
         colours = matplotlib.cm.get_cmap(self.style['colourmap'])
 
@@ -405,7 +403,7 @@ class Plot:
                     plot_data = (
                         self.plot_data
                         .pipe(self.filter_plot_data, mapkey='by', value=subcat)
-                        .pipe(self.filter_plot_data, mapkey='group', value=g)
+                        .pipe(self.filter_plot_data, mapkey=group_key, value=g)
                     )
 
                     xdata = self.pull_data('x', plot_data)
