@@ -238,14 +238,10 @@ class Plot:
             elif type(mapped_attr) in (int, float):
                 attr_data = mapped_attr * np.ones(data.shape[0])
 
-            elif mapped_attr is None:
-                # redundant?
-                attr_data = pd.Series([None])
-
             else:
                 ValueError('Variables must be mapped to data with either string references or functions')
         else:
-            attr_data = pd.Series([None])
+            attr_data = None  # pd.Series([None])
 
         return attr_data
 
@@ -395,9 +391,9 @@ class Plot:
         )
 
         if 'colour' in self.mapping.keys():
-            groups = self.pull_data('colour', self.data).unique()
+            groups = np.unique(self.pull_data('colour', self.data))
         else:
-            groups = self.pull_data('group', self.data).unique()
+            groups = np.unique(self.pull_data('group', self.data))
 
         colours = matplotlib.cm.get_cmap(self.style['colourmap'])
 
