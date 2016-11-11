@@ -23,7 +23,10 @@ def facet_dimensions(number_of_plots):
     side_length = int(sqrt_nplots)
     nrows, ncols = (side_length, side_length)
 
-    if sqrt_nplots > (side_length + 0.5):
+    if number_of_plots < 4:
+        nrows = 1
+        ncols = number_of_plots
+    elif sqrt_nplots > (side_length + 0.5):
         nrows += 1
         ncols += 1
     elif sqrt_nplots > side_length:
