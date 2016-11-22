@@ -66,8 +66,7 @@ THEME_SNOW = {
         },
         'heatmap': {
             'interpolation': 'nearest',
-            'origin': 'lower',
-            'fill_value': 0
+            'origin': 'lower'
         },
         'refline': {
             'color': 'black',

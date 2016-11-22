@@ -578,7 +578,8 @@ class Plot:
                     plot_data,
                     index=self.mapping['y'],
                     columns=self.mapping['x'],
-                    values=self.mapping['colour']
+                    values=self.mapping['colour'],
+                    fill_value=0  # could include this as a kwarg...
                 )
 
                 ax.imshow(plot_matrix, **kwargs)
