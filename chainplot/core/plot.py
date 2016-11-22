@@ -474,13 +474,16 @@ class Plot:
                     lookup = categorical_lookup(plot_data[self.mapping['y']]) if lookup is None else lookup
                     ydata = ydata.replace(lookup)
 
-                texts = []
-                for txt_i, txt in enumerate(txt_data):
-                    # ax.annotate(str(txt), (xdata[txt_i], ydata[txt_i]), **kwargs)  # old method
-                    texts.append(ax.text(xdata[txt_i], ydata[txt_i], str(txt), **kwargs))
+                if check_overlap is True:
+                    texts = []
+                    for txt_i, txt in enumerate(txt_data):
+                        texts.append(ax.text(xdata[txt_i], ydata[txt_i], str(txt), **kwargs))
 
-                if check_overlap:
                     adjust_text(texts, xdata, ydata, ax=ax, **adjust_kwargs)
+                else:
+                    for txt_i, txt in enumerate(txt_data):
+                        # annotate is preferred else text isn't limited by axes limits
+                        ax.annotate(str(txt), (xdata[txt_i], ydata[txt_i]), **kwargs)
 
             else:
                 ax.axis('off')
