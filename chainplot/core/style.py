@@ -64,6 +64,11 @@ THEME_SNOW = {
         'line': {
             'color': 'black'
         },
+        'heatmap': {
+            'interpolation': 'nearest',
+            'origin': 'lower',
+            'fill_value': 0
+        },
         'refline': {
             'color': 'black',
             'ls': 'dotted'

@@ -551,6 +551,43 @@ class Plot:
 
         return self.apply_style()
 
+    def layer_heatmap(self, **kwargs):
+        categories = self.get_facet_variables()
+
+        kwargs, _ = split_kwargs(kwargs, 'shadow_')
+
+        kwargs = britishdict(kwargs)
+        kwargs = combine_dict(
+            self.style['layers']['heatmap'],
+            kwargs
+        )
+        kwargs = combine_dict(
+            {'cmap': self.style['scales']['cmap']},
+            kwargs
+        )
+
+        for i, ax in enumerate(self.axes):
+            if i < len(categories):
+
+                # could use `self.subset_data` method here instead, perhaps
+                subcat = categories[i]
+                plot_data = self.get_facet_data(subcat)
+
+                # reshape data into matrix
+                plot_matrix = pd.pivot_table(
+                    plot_data,
+                    index=self.mapping['y'],
+                    columns=self.mapping['x'],
+                    values=self.mapping['colour']
+                )
+
+                ax.imshow(plot_matrix, **kwargs)
+
+            else:
+                ax.axis('off')
+
+        return self.apply_style()
+
     def layer_calcline(self, func, **kwargs):
         categories = sorted(self.plot_data[self.mapping['by']].unique())
         kwargs = britishdict(kwargs)
