@@ -100,7 +100,7 @@ THEME_BW = {
             'color': 'black'
         },
         'label': {
-            'size': 6
+            'size': 12
         },
         'spines': {
             'color': 'black'
@@ -178,7 +178,7 @@ GGPLOT = {
             'color': 'black'
         },
         'label': {
-            'size': 6
+            'size': 12
         },
         'spines': {
             'color': 'black'
