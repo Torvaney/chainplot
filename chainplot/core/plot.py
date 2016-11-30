@@ -115,8 +115,9 @@ class Plot:
                 ax.get_xaxis().tick_bottom()
                 ax.get_yaxis().tick_left()
                 # Set tick label size
-                ax.get_xticklabels().set_fontsize(style['axes']['label'])
-                ax.get_xticklabels().set_fontsize(style['axes']['label'])
+                for label in (ax.get_xticklabels() + ax.get_yticklabels()):
+                    label.set_fontsize(style['axes']['label']['size'])
+                    label.set_fontsize(style['axes']['label']['size'])
 
                 # Set background colour
                 ax.set_axis_bgcolor(style['axes']['background']['color'])
