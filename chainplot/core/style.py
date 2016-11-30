@@ -13,9 +13,12 @@ THEME_SNOW = {
         'color': 'dimgray'
     },
     'axes': {
-        'text': {
+        'title': {
             'fontsize': 16,
             'color': 'dimgray'
+        },
+        'label': {
+            'size': 6
         },
         'spines': {
             'color': 'dimgray'
@@ -92,9 +95,12 @@ THEME_BW = {
         'color': 'dimgray'
     },
     'axes': {
-        'text': {
+        'title': {
             'fontsize': 16,
             'color': 'black'
+        },
+        'label': {
+            'size': 6
         },
         'spines': {
             'color': 'black'
@@ -167,9 +173,12 @@ GGPLOT = {
         'color': 'dimgray'
     },
     'axes': {
-        'text': {
+        'title': {
             'fontsize': 16,
             'color': 'black'
+        },
+        'label': {
+            'size': 6
         },
         'spines': {
             'color': 'black'

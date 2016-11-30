@@ -114,6 +114,9 @@ class Plot:
                 # Remove extra ticks
                 ax.get_xaxis().tick_bottom()
                 ax.get_yaxis().tick_left()
+                # Set tick label size
+                ax.get_xticklabels().set_fontsize(style['axes']['label'])
+                ax.get_xticklabels().set_fontsize(style['axes']['label'])
 
                 # Set background colour
                 ax.set_axis_bgcolor(style['axes']['background']['color'])
@@ -122,9 +125,9 @@ class Plot:
                 nrows, ncols = facet_dimensions(self.number_of_plots)
 
                 if (i % ncols) == 0:
-                    ax.set_ylabel(labels['ylab'], **style['axes']['text'])
+                    ax.set_ylabel(labels['ylab'], **style['axes']['title'])
                 if (i // ncols) == (nrows - 1):
-                    ax.set_xlabel(labels['xlab'], **style['axes']['text'])
+                    ax.set_xlabel(labels['xlab'], **style['axes']['title'])
 
                 ax.set_title(subtitle[i], **style['subtitle'])
 
