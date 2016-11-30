@@ -799,9 +799,9 @@ class Plot:
             else:
                 subtitle = ''
 
-        if type(subtitle) in (list, tuple):
-            for i, ax in enumerate(self.axes):
-                ax.set_title(subtitle, **kwargs)
+        if isinstance(subtitle, (list, tuple)):
+            for sub, ax in zip(subtitle, self.axes):
+                ax.set_title(sub, **kwargs)
         else:
             for ax in self.axes:
                 ax.set_title(subtitle, **kwargs)
