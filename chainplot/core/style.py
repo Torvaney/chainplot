@@ -18,7 +18,7 @@ THEME_SNOW = {
             'color': 'dimgray'
         },
         'label': {
-            'size': 6
+            'size': 12
         },
         'spines': {
             'color': 'dimgray'
