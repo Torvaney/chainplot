@@ -656,7 +656,7 @@ class Plot:
                 ax.plot(xline, yline, **kwargs)
                 ax.annotate(annotation, (xline[1], yline[1]),
                             va='center', ha='right',
-                            color=self.style['axes']['text']['color'])
+                            color=self.style['axes']['title']['color'])
                 ax.set_ylim(yline)
 
         return self
@@ -685,7 +685,7 @@ class Plot:
                 ax.plot(xline, yline, **kwargs)
                 ax.annotate(annotation, (xline[1], yline[1]),
                             va='bottom', ha='right',
-                            color=self.style['axes']['text']['color'])
+                            color=self.style['axes']['title']['color'])
                 ax.set_xlim(xline)
 
         return self
