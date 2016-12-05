@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='chainplot',
     packages=find_packages(),
-    version='0.2',
+    version='0.2.1',
     description='A(nother) matplotlib wrapper',
     author='Ben Torvaney',
     author_email='btorvaney@gmail.com',
