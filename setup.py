@@ -1,9 +1,9 @@
-from distutils.core import setup
+from distutils.core import setup, find_packages
 
 setup(
     name='chainplot',
-    packages=['chainplot', 'chainplot.core', 'chainplot.utils'],
-    version='0.1.2',
+    packages=find_packages(),
+    version='0.2',
     description='A(nother) matplotlib wrapper',
     author='Ben Torvaney',
     author_email='btorvaney@gmail.com',
