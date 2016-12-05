@@ -4,6 +4,8 @@
     * (maybe a layer class or something?)
 
 # Stuff to add:
+* DOCS!!!
+* TESTS!!!
 * Add default styling for layers to style.py
 * Add ordering for facets/categorical variables
 * Move non-plotting functions to another directory
